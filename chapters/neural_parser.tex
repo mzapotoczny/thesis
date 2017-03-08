@@ -1,0 +1,20 @@
+\chapter{Neural dependency parser}
+
+\section{Overview of the network architecture}
+The network architecture consists of three main parts: reader, tagger and parser
+(see Figure \ref{fig:architecture}). The reader subnetwork is evaluated on
+each individual word in a sentence, and using convolutions on their orthographic
+representation produces words embeddings. Next, the tagger subnetwork implemented
+as bidirectional RNN equips each word with a context of whole sentence. Finally
+parser part computes dependency tree parent for each word using attention mechanism
+\cite{vinyals_pointer_2015} after which network computes appropriate dependency label.
+In the following paragraphs we will describe all parts in detail.
+
+\begin{figure}[t]
+  \centering
+  \resizebox{0.8\textwidth}{!}{
+    \import{img/network/}{drawing.pdf_tex}
+  }
+  \caption{The model architecture.} 
+  \label{fig:architecture}
+\end{figure}
