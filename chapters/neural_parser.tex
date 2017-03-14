@@ -18,3 +18,96 @@ In the following paragraphs we will describe all parts in detail.
   \caption{The model architecture.} 
   \label{fig:architecture}
 \end{figure}
+
+\subsection{Reader}
+As stated before the reader subnetwork is run on each word producing its embedding.
+This architecture is based on \cite{kim_character-aware_2015}. Each word $w$
+is represented by sequence of its characters plus a special beggining-of-word and
+end-of-word tokens. Firstly we find low-dimensional characters embeddings which
+are concatenated to form a matrix $C^w$. Then we run 1D convolutional filters
+on $C^w$ which then is reduced to vector of filter responses computed as:
+\begin{equation} \label{eq:filter_responses}
+    R^w_i = \max( C^w \ast F^i )
+\end{equation}
+Where $F^i$ is i-th filter. The purpose of the convolutions is to react to
+specific part of words (because we have bow and eow tokens it can also react to
+prefixes and suffixes) which in morphologically rich languages such as Polish   % https://forum.wordreference.com/threads/the-english-language-capital-letter-or-not.2110557/
+can depict its grammatical role.
+
+Finally we transform filter responses $R^w$ with a simple multi-layer perceptron
+\footnote{Which are just linear transformations followed be non-linearity}
+obtaining the final word embedding $E^w = \text{MLP}(R^w)$.
+
+\subsection{Tagger}
+Having obtained the word embeddings $E^w$ we can proceed with actually "reading"
+whole sentence. To do this we use multi-layer bidirectional RNN (\cite{schuster_bidirectional_1997})
+(we have evaluated LSTM\cite{RNN_LSTM} and GRU\cite{RNN_GRU} types). We combine
+the backward and forward passes by adding them.
+
+\subsubsection{POS tagger}
+To prevent overfitting and encourage network to compute morphological features
+we can add additional training objetive. It works by taking output from one of
+the tagger BiRNN layers and use it to predict available part-of-speech tags for
+each word. The result is not feeded back to the rest of the network because it
+would introduce too much noise.
+
+\subsection{Parser}
+The last part of the network serves two purposes: to find head for each word and
+to compute label for that edge.
+
+\subsubsection{Finding head word}
+We use method similar to \cite{vinyals_pointer_2015}.
+The input to this part are word annotations $H_0, H_1, \dots, H_n$ (where $H_0$
+serves as a root word) produced by the tagger. For each of the words $1,2,\dots,n$
+we compute probability distribution which tell us where the head of current
+word should be ($0,1,2,\dots,n$). This computation (called \textit{scorer}) is implemented
+as small feedforward network $s(w,l) = f(H_w, H_l)$, where $w \in {1,2,\dots,n}$,
+$l \in {0,1,2,\dots,n}$.
+
+\subsubsection{Finding edge label}
+Output of the scorer can already be interpreted as
+pointer network, but in order to use it as attention for computing dependency label
+we have to normalize it:
+\begin{equation} \label{eq:label_attention}
+    p(w,l) = \sum_{i=0}^{n} \frac{f(H_w, H_l)}{f(H_w, H_i)}
+\end{equation}
+The dependency label is computed by small Maxout network \cite{goodfellow_maxout_2013},
+which takes the current word annotation $H_w$ and heads annotation $A_w$. This
+part is called \textit{labeler}.
+We investigated two wariations of heaed annotation $A_w$
+\\
+\\
+\\
+\textit{Soft attention}\\
+Which is a weighted average of normalized attention \ref{eq:label_attention}
+and words annotations $H$. 
+$$ A_w = \sum_{i=0}^{n} p(w,i)H_i $$
+\\
+\textit{Hard attention}\\
+Here we use a only head annotation.
+$$ A_w = H_h $$
+During training we use ground-truth head location, whereas during evaluation
+we use head word computed in previous step.
+
+\section{Training}
+\subsection{Training criterion}
+Every neural network needs a training criterion which will be optimized.
+Here we have 3 individual training criterions combined together as linear
+combination. Those are:
+\begin{itemize}
+        \item The negative log-likelihood loss $L_h$ on finding proper head for each
+            word. The training singnal is propagated from scorer down to the reader.
+        \item The negative log-likelihood loss $L_l$ on finding dependency label.
+            With soft attention it is propagated through the whole network (excluding
+            pos tagging part), while with the hard attention we do not propagate
+            through the scorer.
+        \item The (optional) negative log-likelihood loss $L_t$ on predicting pos tags.
+            This error is backpropagated only through pos-tagger and part of tagger
+            down to the reader.
+\end{itemize}
+So the final loss is:
+\begin{equation}\label{eq:neural_loss}
+    L = \alpha_hL_h + \alpha_lL_l + \alpha_tL_t
+\end{equation}
+
+\subsection{Hyperparameters}
