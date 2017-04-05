@@ -1,5 +1,4 @@
 \chapter{Neural dependency parser}
-
 \section{Overview of the network architecture}
 The network architecture consists of three main parts: reader, tagger and parser
 (see Figure \ref{fig:architecture}). The reader subnetwork is evaluated on
@@ -10,7 +9,7 @@ parser part computes dependency tree parent for each word using attention mechan
 \cite{vinyals_pointer_2015} after which network computes appropriate dependency label.
 In the following paragraphs we will describe all parts in detail.
 
-\begin{figure}[t]
+\begin{figure}[!htbp]
   \centering
   \resizebox{0.8\textwidth}{!}{
     \import{img/network/}{drawing.pdf_tex}
@@ -22,7 +21,7 @@ In the following paragraphs we will describe all parts in detail.
 \subsection{Reader}
 As stated before the reader subnetwork is run on each word producing its embedding.
 This architecture is based on \cite{kim_character-aware_2015}. Each word $w$
-is represented by sequence of its characters plus a special beggining-of-word and
+is represented by sequence of its characters plus a special beginning-of-word and
 end-of-word tokens. Firstly we find low-dimensional characters embeddings which
 are concatenated to form a matrix $C^w$. Then we run 1D convolutional filters
 on $C^w$ which then is reduced to vector of filter responses computed as:
@@ -44,12 +43,12 @@ whole sentence. To do this we use multi-layer bidirectional RNN (\cite{schuster_
 (we have evaluated LSTM\cite{RNN_LSTM} and GRU\cite{RNN_GRU} types). We combine
 the backward and forward passes by adding them.
 
-\subsubsection{POS tagger}
+\subsubsection{POS tag predictor}
 To prevent overfitting and encourage network to compute morphological features
-we can add additional training objetive. It works by taking output from one of
+we can add additional training objective. It works by taking output from one of
 the tagger BiRNN layers and use it to predict available part-of-speech tags for
-each word. The result is not feeded back to the rest of the network because it
-would introduce too much noise.
+each word. The result is not feeded back to the rest of the network because we
+think it would introduce too much noise.
 
 \subsection{Parser}
 The last part of the network serves two purposes: to find head for each word and
@@ -60,7 +59,7 @@ We use method similar to \cite{vinyals_pointer_2015}.
 The input to this part are word annotations $H_0, H_1, \dots, H_n$ (where $H_0$
 serves as a root word) produced by the tagger. For each of the words $1,2,\dots,n$
 we compute probability distribution which tell us where the head of current
-word should be ($0,1,2,\dots,n$). This computation (called \textit{scorer}) is implemented
+word should be ($0,1,2,\dots,n$). This computation (called \emph{scorer}) is implemented
 as small feedforward network $s(w,l) = f(H_w, H_l)$, where $w \in {1,2,\dots,n}$,
 $l \in {0,1,2,\dots,n}$.
 
@@ -73,36 +72,43 @@ we have to normalize it:
 \end{equation}
 The dependency label is computed by small Maxout network \cite{goodfellow_maxout_2013},
 which takes the current word annotation $H_w$ and heads annotation $A_w$. This
-part is called \textit{labeler}.
-We investigated two wariations of heaed annotation $A_w$
+part is called \emph{labeler}.
+We investigated two variations of head annotation $A_w$
 \\
 \\
 \\
-\textit{Soft attention}\\
+\emph{Soft attention}\\
 Which is a weighted average of normalized attention \ref{eq:label_attention}
 and words annotations $H$. 
 $$ A_w = \sum_{i=0}^{n} p(w,i)H_i $$
 \\
-\textit{Hard attention}\\
+\emph{Hard attention}\\
 Here we use a only head annotation.
 $$ A_w = H_h $$
 During training we use ground-truth head location, whereas during evaluation
 we use head word computed in previous step.
 
+\subsubsection{Decoding algorithm}
+The \emph{scorer} give us a $n$x$n+1$ matrix of head dependency preference
+for each word. From this matrix we have find a set of dependencies that satisfy
+some constraints (exactly one root dependant, no cycles).
+We investigated two possibilities for such decoding: a greedy algorithm, and
+Chu-Liu-Edmonds \cite{edmonds_optimim_1966}.
+
 \section{Training}
 \subsection{Training criterion}
 Every neural network needs a training criterion which will be optimized.
-Here we have 3 individual training criterions combined together as linear
+Here we have 3 individual training criterion combined together as linear
 combination. Those are:
 \begin{itemize}
         \item The negative log-likelihood loss $L_h$ on finding proper head for each
-            word. The training singnal is propagated from scorer down to the reader.
+            word. The training signal is propagated from scorer down to the reader.
         \item The negative log-likelihood loss $L_l$ on finding dependency label.
             With soft attention it is propagated through the whole network (excluding
             pos tagging part), while with the hard attention we do not propagate
             through the scorer.
         \item The (optional) negative log-likelihood loss $L_t$ on predicting pos tags.
-            This error is backpropagated only through pos-tagger and part of tagger
+            This error is backpropagated only through pos-predictor and part of tagger
             down to the reader.
 \end{itemize}
 So the final loss is:
@@ -110,4 +116,70 @@ So the final loss is:
     L = \alpha_hL_h + \alpha_lL_l + \alpha_tL_t
 \end{equation}
 
-\subsection{Hyperparameters}
+\subsection{Regularization, optimizer and hyperparameters}
+\todo{Czy należy wszystko opisywać? weight decay, adadelta, dropout, spearmint itd.}
+Regularization is a essential part of  neural network training. It improves 
+generalization and prevents overfitting. One of the most popular regularization
+technique is called Dropout \cite{srivastava_dropout:_2014}. Using it, we randomly
+drop part of the connections from a certain network layer during training.
+In our case dropout is applied to the \emph{reader} output, between the BiRNN
+layers of the \emph{tagger} and to the \emph{labeller}.
+
+The models are trained using Adedelta\cite{zeiler_adadelta:_2012} learning rule,
+with weight decay and adaptive gradient clipping \cite{chorowski_end--end_2014}.
+All experiments are early stopped on validation set UAS.
+
+Hyperparameter selection is crucial for neural networks to obtain good results.
+For example, comparing our first experiments with architecture depicted above to
+the best single-language results (using the same basic architecture) gave us
+about 5\% boost in UAS score on Polish language.
+
+To find the best hyperparameters we have used the Spearmint system \cite{snoek_practical_2012}
+invoked on polish dataset. The chosen parameters are as follows.
+The \emph{reader} embeds each character into 15 dimensions, and
+contains 1050 filters (50$\cdot$k filters of length k for k = 1, 2,\dots, 6) 
+whose outputs are projected into 512 dimensions transformed by a 3 equally
+sized layers of feedforward neural network with ReLU activation.
+The \emph{tagger} contains 2 BiRNN layers of GRU units with 548 hidden
+states for both forward and backward passes which are later aggregated using
+addition. Therefore the hidden states of the tagger are also 548-dimensional.
+The \emph{POS tag predictor} consists of a single affine transformation
+followed by a SoftMax predictor for each POS category.
+The \emph{scorer} uses a single layer of 384 tanh for head word
+scoring while the \emph{labeller} uses 256 Maxout units
+(each using 2 pieces) to classify the relation label
+\cite{goodfellow_maxout_2013}. The training cost used the constants
+$\alpha_h=0.6, \alpha_l=0.4, \alpha_t=1.0$.
+We apply 20\% dropout to the \emph{reader} output, 70\% between the BiRNN
+layers of the \emph{tagger} and 50\% to the \emph{labeller}. The weight
+decay is 0.95. %Adadelta epsilon annealed from 1e-8 to 1e-12
+
+\section{Dataset}
+UD v1.3
+
+\section{Multilingual training}
+The big problem of learning to parse is small number of gold standard dependency
+trees for many languages (including Polish). With small number of examples
+neural networks do not generalize well and can more easily overfit.
+There also exist languages with good, standardized treebank like Czech Prague
+Treebank\cite{prague_treebank}.
+
+Because our model is purely neural network we can incorporate a multitask learning
+\cite{caruana_multitask_learning}. It allows the network to learn multiple tasks
+at the same time, sharing common patterns and distinguishing differences.
+Additionally, because we are using Universal Dependencies treebanks \cite{nivre_universal_2015}
+we have common standardized format across many languages, which allowed for
+easy implementation of multitask learning and experiments across different languages.
+
+The multilingual model for $n$ languages can be viewed as $n$ copies of our
+basic model, but sharing part of the parameters. To unify input/output for each
+of the models we sum possible outputs for each data category (characters,
+POS categories, dependency labels). If some category doesn't exist within
+a particular language then we use a special UNK token. 
+To actually make use of multitask learning we must share at least part of the
+parameters of all models. We experimented with different sharing strategies
+, from share-everything to only sharing the  \textit{parser} part. Additionally
+to prevent over-representation of some
+languages during training we sample (on each epoch) only portion of the available
+data so that each language have equal number of examples (equal to number of samples
+of the smallest language).

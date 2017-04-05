@@ -1,0 +1,36 @@
+\chapter{Results}
+
+\section{Single language}
+Our basic results for subset of UD v1.3\cite{nivre_universal_2015} as shown
+in table \ref{tab:universal_basic}. We compare ourselves to SyntaxNet and
+ParseySaurus, ....
+\begin{table}[tb]
+  \centering
+  \caption{Baseline results of models trained on single languages from
+    UD v1.3. Our models use only the orthographic representation of
+    tokenized words during inference and can work without a separate POS tagger.}
+  \label{tab:universal}
+  \begin{tabular}{l l | l l | l l | l l}
+    language & \#sentences & \multicolumn{2}{c|}{Ours} &
+      \multicolumn{2}{c|}{SyntaxNet} & \multicolumn{2}{c}{ParseySaurus} \\ \hline
+    & & UAS & LAS & UAS & LAS & UAS & LAS\\ \hline
+    Czech & 87 913 & \textbf{91.41} & \textbf{88.18} & 89.47 & 85.93 & 89.09 & 84.99 \\
+    Polish & 8 227 & 90.26 & 85.32 & 88.30 & 82.71 & \textbf{91.86} & \textbf{87.49}\\
+    Russian & 5 030 & 83.29 & 79.22 & 81.75 & 77.71 & \textbf{84.27} & \textbf{80.65} \\
+    German & 15 892 & 82.67 & 76.51 & 79.73 & 74.07 & \textbf{84.12} & \textbf{79.05}\\
+    English & 16 622 & 87.44 & 83.94 & 84.79 & 80.38 & \textbf{87.86} & \textbf{84.45}\\ % Zblizamy sie do saurusa a dopiero pratraining...
+    French & 16 448 & \textbf{87.25} & \textbf{83.50} & 84.68 & 81.05 & 86.61 & 83.1\\
+    Ancient Greek & 25 251 & \textbf{78.96} & \textbf{72.36} & 68.98 & 62.07 & 73.85 & 68.1
+  \end{tabular}
+\end{table}
+predictor, reader impact
+
+\subsection{Soft vs Hard attention}
+\subsection{Decoding algorithm}
+\subsection{Word pieces}
+\subsection{Pointer softening}
+\subsection{Recurrent state size}
+
+\section{Multilanguage}
+
+\section{Error analysis}
