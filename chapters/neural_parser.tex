@@ -116,7 +116,7 @@ So the final loss is:
     L = \alpha_hL_h + \alpha_lL_l + \alpha_tL_t
 \end{equation}
 
-\subsection{Regularization, optimizer and hyperparameters}
+\subsection{Regularization, optimizer and hyperparameters} \label{sec:basic_params}
 \todo{Czy należy wszystko opisywać? weight decay, adadelta, dropout, spearmint itd.}
 Regularization is a essential part of  neural network training. It improves 
 generalization and prevents overfitting. One of the most popular regularization
@@ -153,9 +153,6 @@ $\alpha_h=0.6, \alpha_l=0.4, \alpha_t=1.0$.
 We apply 20\% dropout to the \emph{reader} output, 70\% between the BiRNN
 layers of the \emph{tagger} and 50\% to the \emph{labeller}. The weight
 decay is 0.95. %Adadelta epsilon annealed from 1e-8 to 1e-12
-
-\section{Dataset}
-UD v1.3
 
 \section{Multilingual training}
 The big problem of learning to parse is small number of gold standard dependency
