@@ -35,7 +35,8 @@
 \usepackage{amssymb} % http://www.rexamine.com/2013/04/latex-polish-babel-and-amssymb-conflict/
 \usepackage{wrapfig}
 \usepackage{todonotes}
-
+\usepackage{multirow}
+\usepackage{transparent}
 %
 %%%%% WŁASNE DEFINICJE I POLECENIA
 %
@@ -45,12 +46,12 @@
 %\theoremstyle{plain} \newtheorem{lemma}[definition]{Lemma}
 %\renewcommand \qedsymbol {\ensuremath{\square}}
 % ...
+\newcommand{\todotext}[1]{{\color{red}#1}}
 %%%%%
 \begin{document}
 
 %%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
 \input{./chapters/introduction.tex}
-\input{./chapters/dependency_parsing.tex}
 \input{./chapters/neural_parser.tex}
 \input{./chapters/results.tex}
 \input{./chapters/summary.tex}

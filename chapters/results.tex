@@ -3,8 +3,10 @@
 \section{Single language}
 All experiments depicted in this section are based on configuration shown in section
 ~\ref{sec:basic_params}. In table \ref{tab:universal} we show our baseline results
+for subset of the UD languages (due to limited computational resources we were
+not able to train models for all of them)
 compared to state-of-the-art SyntaxNet\cite{andor_globally_2016}
-and recently relased ParseySaurus\cite{alberti_parsey_saurus_2017}.
+and recently relased ParseySaurus\cite{alberti_parsey_saurus_2017}, both from Google.
 
 \begin{table}[!htbp]
   \centering
@@ -25,11 +27,45 @@ and recently relased ParseySaurus\cite{alberti_parsey_saurus_2017}.
   \label{tab:universal}
 \end{table}
 
-predictor, reader impact
-
 \subsection{Impact of \emph{reader} and \emph{predictor}}
-words vs chars-per-word + bez predictora
+words vs chars-per-word
 
+baseline bez predictora
+\begin{table*}[tb]
+  \centering
+  \caption{Model performance on selected languages}
+  \label{tab:results}
+  \begin{tabular}{l|cc|cc|cr}
+    & \multicolumn{2}{c|}{Czech} & \multicolumn{2}{c|}{English} & \multicolumn{2}{c|}{Polish} \\
+    & UAS & LAS & UAS & LAS & UAS & LAS \\ 
+    \multicolumn{7}{c}{Gold POS tags} \\  \hline
+    base word & 
+    \textbf{91.7} & \textbf{88} & 
+    \textbf{88.6} & 85.1 & 
+    \textbf{93.4} & \textbf{89.3} \\
+    \multicolumn{7}{c}{Predicted POS tags or no POS tags} \\ \hline
+    words & 
+    82.4 & 72.1 &
+    81.9 & 74.7 & 
+    74.6 & 61.6  \\
+    chars, soft att. & 
+    \textbf{90.1} & 85.7 & % results/inprogress/lab110-01/dependency_norec_smaller_cz/pretraining_best.zip
+    86.5 & 82.1 & % results/inprogress/sonata2/dep_en/pretraining_best.zip
+    89.1 & 82.5 \\ %results/inprogress/lab110-11/dep_pl_lessclip/pretraining_best.zip
+    chars, tags, soft att. & 
+    89.6 & 82.8 & % lab110-02 results/inprogress/lab110-02/dependency_norec_smaller_cz_tags/pretraining_best.zip
+    86.2 & 81.3 & % results/inprogress/sonata1/dep_en_tags/pretraining_best.zip
+    90.4 & 83.9 \\ % results/inprogress/lab110-03/dep_cpw_opt_no_r_tags/pretraining_best.zip
+    chars, tags, hard att. & 
+    \textbf{90.1} & \textbf{86.7} & % results/inprogress/lab110-01/dependency_norec_smaller_cz_tags_l0_hard_restart/pretraining_best.zip
+    \textbf{87.6} & \textbf{83.6} & % sonata2 local_storage/dependency_norec_spbest_en_tags_l0_hard/pretraining_best.zip
+    \textbf{91.3} & \textbf{86} \\ % results/inprogress/lab110-17/dependency_norec_smaller_pl_tags_l0_hard/pretraining_best.zip
+
+    \multicolumn{7}{p{\textwidth}}{  Note: MaltParser results on
+      Czech are sub-optimal because due to lack of computational
+      resources we had to use a small dataset for parser optimization.}
+  \end{tabular}
+\end{table*}
 \subsection{Gold POS tags}
 
 
@@ -45,15 +81,15 @@ words vs chars-per-word + bez predictora
     \begin{tabular}{c c c c}
         \#pieces & UAS & LAS & LAB \\ \hline
         \multicolumn{4}{c}{Polish}\\
-        25 & 90.29\%  & 84.91\%  & 90.17\% \\
-        50 & 90.40\%  & 85.46\%  & 90.77\% \\
-        75 & 90.23\%  & 84.87\%  & 90.40\% \\
-        100 & 89.97\%  & 84.44\%  & 90.23\% \\
+        25 & 90.29 &  84.91 &  90.17 \\
+        50 & \textbf{90.40} &  \textbf{85.46} &  \textbf{90.77} \\
+        75 &  90.23 & 84.87 &  90.40 \\
+        100 & 89.97 & 84.44 & 90.23 \\\hline
         \multicolumn{4}{c}{Czech}\\
-        25 & \textit{90.29}& \textit{86.50} & \textit{92.66}\\
-        50 & \textit{90.03} & \textit{86.08} & \textit{92.40} \\
-        75 & \textit{90.06} & \textit{86.32} & \textit{92.71} \\
-        100 & \textit{90.10} & \textit{86.17} & \textit{92.41} \\
+        25 & 90.29 & 86.50 & 92.66\\
+        50 & 90.03 & 86.08 & 92.40\\
+        75 & 90.17 & 86.40 & 92.70\\
+        100 &90.84 & 87.31 & 93.20
     \end{tabular}
     \caption{Results on word pieces model. \#pieces denotes how many new
     multi-character tokens were used. To convert word to pieces we
@@ -68,9 +104,9 @@ words vs chars-per-word + bez predictora
     \centering
     \begin{tabular}{c c c c c}
         Language & Algorithm & UAS & LAS & LAB \\ \hline
-        Polish & Greedy & 90.91\% & 86.18\% & 91.16\% \\
-               & Edmonds & 90.90\% & 86.15\% & 91.16\% \\
-        Czech  & Greedy & 90.38\% & 86.79\% & 92.79\% \\
+        \multirow{2}{*}{Polish}& Greedy & 90.91\% & 86.18\% & 91.16\% \\
+               & Edmonds & 90.90\% & 86.15\% & 91.16\% \\ \hline
+        \multirow{2}{*}{Czech}& Greedy & 90.38\% & 86.79\% & 92.79\% \\
                & Edmonds & 90.37\% & 86.77\% & 92.79\% \\
     \end{tabular}
     \caption{Results of label softening. Instead of using one-hot vector as
@@ -84,13 +120,13 @@ words vs chars-per-word + bez predictora
 \begin{table}[!htbp]
     \centering
     \begin{tabular}{l c c c c}
-        Language & \% of recurrent state size & UAS & LAS & LAB \\ \hline 
-        Polish & 100\% & 90.26 & 85.32 & 90.79 \\
-        Polish & 50\% & \textbf{90.54} & \textbf{85.64} & \textbf{90.84} \\
-        Polish & 25\% & 89.07 & 82.80 & 89.03 \\ \hline
-        Czech & 100\% & 91.41 & 88.18 & 90.79 \\
-        Czech & 50\% & 89.98 & 85.92 & 92.31\\
-        Czech & 25\% & 85.56 & 79.16 & 87.88\\ \hline% ale tutaj to malo epok bylo
+        Language & \% of recurrent state size & UAS & LAS & LAB \\ \hline \hline
+        \multirow{3}{*}{Polish}& 100\% & 90.26 & 85.32 & 90.79 \\
+        & 50\% & \textbf{90.54} & \textbf{85.64} & \textbf{90.84} \\
+        & 25\% & 89.07 & 82.80 & 89.03 \\ \hline
+        \multirow{3}{*}{Czech}& 100\% & \textbf{91.41} & \textbf{88.18} & \textbf{90.79} \\
+        & 50\% & 89.98 & 85.92 & 92.31\\
+        & 25\% & 85.56 & 79.16 & 87.88\\ \hline% ale tutaj to malo epok bylo
     \end{tabular}
     \label{tab:birnn_single_size}
     \caption{Impact of the \emph{tagger} recurrent state size on the performance.
@@ -98,13 +134,12 @@ words vs chars-per-word + bez predictora
 \end{table}
 
 \section{Multilanguage}
-
 \begin{table}[!htbp]
     \centering
     \begin{tabular}{l c c c c}
         \% of recurrent state size & UAS & LAS & LAB \\ \hline 
         200\% & 91.45 & 86.36& 91.05 \\
-        100\% & 91.65 & 86.88 & 91.57\\
+        100\% & \textbf{91.65} & \textbf{86.88} & \textbf{91.57}\\
         50\% & 89.53 & 83.66 & 89.55 \\
         25\% & 87.28 & 78.93 & 85.41
     \end{tabular}
@@ -115,3 +150,29 @@ words vs chars-per-word + bez predictora
 \end{table}
 
 \section{Error analysis}
+
+\begin{figure}[!htbp]
+  \centering
+  \resizebox{\textwidth}{!}{
+    \import{img/examples/cle/}{cle.pdf_tex}
+  }
+  \caption{CLE Example} 
+  \label{fig:cle}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \resizebox{1\textwidth}{!}{
+    \import{img/examples/pos/}{bogumil.pdf_tex}
+  }
+  \caption{The model architecture.} 
+  \label{fig:architecture}
+\end{figure}
+\begin{figure}[!htbp]
+  \centering
+  \resizebox{1\textwidth}{!}{
+    \import{img/examples/pos/}{michal.pdf_tex}
+  }
+  \caption{The model architecture.} 
+  \label{fig:architecture}
+\end{figure}

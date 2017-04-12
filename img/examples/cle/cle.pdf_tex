@@ -1,0 +1,78 @@
+%% Creator: Inkscape inkscape 0.92.1, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'cle.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{677.38870239bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.15700177)%
+    \put(0.01683496,0.00319183){\makebox(0,0)[b]{\smash{ROOT}}}%
+    \put(0.1283434,0.00319183){\makebox(0,0)[b]{\smash{Co}}}%
+    \put(0.21761454,0.00319183){\makebox(0,0)[b]{\smash{zrobić}}}%
+    \put(0.29546675,0.00319183){\makebox(0,0)[b]{\smash{,}}}%
+    \put(0.36062165,0.00319183){\makebox(0,0)[b]{\smash{aby}}}%
+    \put(0.4594716,0.00319183){\makebox(0,0)[b]{\smash{uniknąć}}}%
+    \put(0.58126279,0.00319183){\makebox(0,0)[b]{\smash{czyhającego}}}%
+    \put(0.68953577,0.00319183){\makebox(0,0)[b]{\smash{na}}}%
+    \put(0.79713284,0.00319183){\makebox(0,0)[b]{\smash{lodzie}}}%
+    \put(0.90202626,0.00319183){\makebox(0,0)[b]{\smash{zagrożenia}}}%
+    \put(0.99745692,0.00319183){\makebox(0,0)[b]{\smash{?}}}%
+    \put(-0.1494845,-0.01895203){\transparent{0}\makebox(0,0)[b]{\smash{ROOT}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{cle.pdf}}%
+    \put(-0.23067866,0.16180533){\makebox(0,0)[lb]{\smash{}}}%
+    \put(0.03320232,0.038622){\makebox(0,0)[b]{\smash{}}}%
+    \put(-0.02769329,0.05923408){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.33768037,0.05923408){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.39857598,0.038622){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.27678479,0.09031137){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.76394962,0.09031137){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.76394962,0.038622){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.70305401,0.05923408){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.88574085,0.038622){\makebox(0,0)[b]{\smash{}}}%
+    \put(0.58126279,0.1310095){\makebox(0,0)[b]{\smash{}}}%
+    %\put(0,0){\includegraphics[width=\unitlength,page=2]{cle.pdf}}%
+  \end{picture}%
+\endgroup%
