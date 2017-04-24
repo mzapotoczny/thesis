@@ -17,7 +17,7 @@ broken into smaller sub-phrases. Example of such parsing is shown in figure
 In dependency parsing each word (called \emph{dependent})
 is connected via labelled arc to another word of the sentence (called \emph{head})
 or to the special \emph{ROOT} vertice, forming a directed tree.
-Example of such parsing is depicted on figure \ref{fig:dependency_tree}.
+Example of such parsing is depicted on figure~\ref{fig:dependency_tree}.
 
 \begin{figure}[!htbp]
   \centering
@@ -28,16 +28,18 @@ Example of such parsing is depicted on figure \ref{fig:dependency_tree}.
   \label{fig:dependency_tree}
 \end{figure}
 
+\section{Dependency parsing}
+
 A major advantage of dependency parsers over constituency ones are their
 independence from the word ordering. It is important in morphologically rich
 languages like Polish or Czech where the ordering is very flexible, and thus
 related words can be far apart from each other.
 Additionaly the head-dependent relationship is a good approximation to semantic
-relationship between words \cite{covington_fundamental_2001} which is important
+relationship between words~\cite{covington_fundamental_2001} which is important
 for tasks like question answering or information extraction.
 
 The labels of head-dependent arcs tells us about grammatical function that
-dependent word have in respect to the head. In table \ref{tab:label_samples}
+dependent word have in respect to the head. In table~\ref{tab:label_samples}
 we show some of the most popular labels for the english language.
 
 \begin{table}[!htbp]
@@ -58,5 +60,125 @@ we show some of the most popular labels for the english language.
     \label{tab:label_samples}
 \end{table}
 
-\section{Universal Depndencies}
-UD v1.3
+\subsubsection{Projectivity}
+We can distinguish two types of dependency trees: projective and nonprojective.
+We say that head-dependent arc is projective is there exists a path from head
+to every word between head and dependent in the sentence. A dependency tree is
+projective if all its arcs are projective.
+Intuitively we can say that nonprojective trees are trees that cannot be drawn
+without crossing the edges (see figure~\ref{fig:dependency_nonproj}).
+Altough English dataset has less than 5\% of nonprojective sentences other
+languages can have significant amount - like Czech (12\%) or Ancient Greek (63\%)~\cite{straka_parsing_2015}.
+It is important to acknowledge this fact because some of the presented parsing
+methods can only produce projective trees.
+
+\begin{figure}[!htbp]
+  \centering
+  \resizebox{1.0\textwidth}{!}{
+    \import{img/examples/dep/}{nonproj.pdf_tex}
+  }
+  \caption{A sample nonprojective dependency parse tree. The on $\rightarrow$ hearing arc is
+    nonprojective and thus the whole tree becomes nonprojective.}
+  \label{fig:dependency_nonproj}
+\end{figure}
+
+\subsection{Parsing algorithms}
+In following section we will present two basic approaches to dependency parsing.
+Although the differ in complexity and output flexibility, both of them depends
+on supervised machine learning techniques.
+
+\subsubsection{Transition based}
+In transition based parsing we find a transition sequence from initial configuration
+to terminal one. A configuration $c$ is a triple $(s, b, A)$ containing stack $s$,
+buffer $b$ and set of dependency arcs $A$. For given sentence $w_1, \cdots w_n$
+the corresponding initial configuration would be $(\text{[ROOT]}, [w_1, \cdots w_n], \emptyset)$.
+The terminal configuration is $(\text{ROOT}, [], A)$ in which $A$ is resulting parse tree.
+There are three possible transitions:
+\begin{itemize}
+    \item {\ttfamily LEFTARC(l)} - Pop from the stack elements $s_1$ and $s_2$,
+        add arc $s_1 \rightarrow s_2$ with label $l$ to the set $A$ and push $s_1$ back
+        to the stack
+    \item {\ttfamily RIGHTARC(l)} - Pop from the stack elements $s_1$ and $s_2$,
+        add arc $s_2 \rightarrow s_1$ with label $l$ to the set $A$ and push $s_2$ back
+        to the stack
+    \item {\ttfamily SHIFT} - Move first element from the buffer to the stack
+\end{itemize}
+An example of parsing sequence is shown in table~\ref{tab:transition_parse}.
+\begin{table}[!htbp]
+    \centering
+{\footnotesize
+    \begin{tabular}{l | l | l | l}
+        Stack & Buffer & Transition & New arcs \\ \hline
+        $[$ROOT$]$ & $[$He has good control$]$ & {\ttfamily SHIFT} & - \\
+        $[$ROOT He$]$ & $[$has good control$]$ & {\ttfamily SHIFT} & - \\
+        $[$ROOT He has$]$ & $[$good control$]$ & {\ttfamily LEFTARC(nsubj)} & nsubj(has,He) \\
+        $[$ROOT has$]$ & $[$good control$]$ & {\ttfamily SHIFT} & - \\
+        $[$ROOT has good$]$ & $[$control$]$ & {\ttfamily SHIFT} & - \\
+        $[$ROOT has good control$]$ & $[$$]$ & {\ttfamily LEFTARC(amod)} & amod(control, good) \\
+        $[$ROOT has control$]$ & $[$$]$ & {\ttfamily RIGHTARC(dobj)} & dobj(has, control) \\
+        $[$ROOT has$]$ & $[$$]$ & {\ttfamily RIGHTARC(root)} & root(ROOT, has) \\
+        $[$ROOT$]$ & $[$$]$ & - & - \\
+    \end{tabular}
+}
+    \caption{Transitions neede to parse sentence "He has good control"}
+    \label{tab:transition_parse}
+\end{table}
+
+Because every word of the sentence has be shifted to the stack exactly once
+and {\ttfamily ARC} operations reduce stack size by one we will have exactly
+$2n$ transitions from initial to terminal configuration, so the time complexity of this
+algorithm is $O(n)$ where $n$ is number of words in a sentence.
+Using this algorithm we can represent any projective tree 
+\cite{nivre_algorithms_2008} (nonprojectives cannot be represented).
+
+The decision which transition to use between consecutive configurations is
+obtained through machine learning techniques. This can vary from simple
+linear SVM~\cite{nivre_maltparser:_2005} to neural networks~\cite{chen_fast_2014,
+andor_globally_2016}.
+
+\subsubsection{Graph based}
+Alternative approach is to use graph-based algorithms. The idea is that we define
+a space of candidate arcs, find a model to score each arc and then use some parsing
+algorithm to find dependency tree with highest score.
+
+The candidate space and scoring depends on the used learning model, but we can
+distinguish two main parsing algorithms: Chu-Liu-Edmonds and Eisner.
+
+\noindent
+\textbf{Chu-Liu-Edmonts}
+\todotext{Tutaj opis cle}
+
+\noindent
+\textbf{Eisner}
+\todotext{Tutaj opis eisnera}
+
+\subsection{Evaluation of parsing algorithms}
+Having obtained dependency tree for a particular sentence we have to be able
+to compare it with gold-standard parse.
+There are two main evaluation metrics:
+\begin{itemize}
+    \item \textbf{Unlabelled Attachnment Score} (UAS), is a percentage of words
+        with correct predicted head
+    \item \textbf{Labelled Attachnment Score} (LAS), is a percentage of words
+        with correct predicted head \textbf{and} correct predicted label
+\end{itemize}
+In the experimental section we will show both scores, whenewer available.
+
+\subsection{Universal Dependencies}
+Up till recently most development of dependency parsers was done in single language
+setting, where we have different parser for every language we want to use, each
+using language-specific morphosyntactical features. The Universal Dependencies
+project \cite{nivre_universal_2015} aims to provide a cross-linguistically consistent
+treebank annotation. It is based on previous work on universal Stanford
+Dependencies~\cite{marneffe_generating_2006},
+Google universal pos tags~\cite{petrov_universal_2011}
+and the Interset interlingua~\cite{zeman_reusable_2008}.
+The UD project unifies part of speech tags and dependency relations labels
+for 30+ languages under common CONNL-U format.
+The main advantage is that we can use the same parsing system for every language
+(data has consistent format) additionaly because the morphosyntactical data has
+common format we can try to combine data coming from different languages (see
+section~\ref{sec:neural_multilingual}).
+
+\section{Neural Networks}
+

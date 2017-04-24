@@ -1,7 +1,7 @@
 \chapter{Neural dependency parser}
 \section{Overview of the network architecture}
 The network architecture consists of three main parts: reader, tagger and parser
-(see Figure \ref{fig:architecture}). The reader subnetwork is evaluated on
+(see Figure~\ref{fig:architecture}). The reader subnetwork is evaluated on
 each individual word in a sentence, and using convolutions on their orthographic
 representation produces words embeddings. Next, the tagger subnetwork implemented
 as bidirectional RNN equips each word with a context of whole sentence. Finally
@@ -20,7 +20,7 @@ In the following paragraphs we will describe all parts in detail.
 
 \subsection{Reader}
 As stated before the reader subnetwork is run on each word producing its embedding.
-This architecture is based on \cite{kim_character-aware_2015}. Each word $w$
+This architecture is based on~\cite{kim_character-aware_2015}. Each word $w$
 is represented by sequence of its characters plus a special beginning-of-word and
 end-of-word tokens. Firstly we find low-dimensional characters embeddings which
 are concatenated to form a matrix $C^w$. Then we run 1D convolutional filters
@@ -40,7 +40,7 @@ obtaining the final word embedding $E^w = \text{MLP}(R^w)$.
 \subsection{Tagger}
 Having obtained the word embeddings $E^w$ we can proceed with actually "reading"
 whole sentence. To do this we use multi-layer bidirectional RNN (\cite{schuster_bidirectional_1997})
-(we have evaluated LSTM\cite{RNN_LSTM} and GRU\cite{RNN_GRU} types). We combine
+(we have evaluated LSTM~\cite{RNN_LSTM} and GRU~\cite{RNN_GRU} types). We combine
 the backward and forward passes by adding them.
 
 \subsubsection{POS tag predictor}
@@ -55,7 +55,7 @@ The last part of the network serves two purposes: to find head for each word and
 to compute label for that edge.
 
 \subsubsection{Finding head word}
-We use method similar to \cite{vinyals_pointer_2015}.
+We use method similar to~\cite{vinyals_pointer_2015}.
 The input to this part are word annotations $H_0, H_1, \dots, H_n$ (where $H_0$
 serves as a root word) produced by the tagger. For each of the words $1,2,\dots,n$
 we compute probability distribution which tell us where the head of current
@@ -70,7 +70,7 @@ we have to normalize it:
 \begin{equation} \label{eq:label_attention}
     p(w,l) = \sum_{i=0}^{n} \frac{f(H_w, H_l)}{f(H_w, H_i)}
 \end{equation}
-The dependency label is computed by small Maxout network \cite{goodfellow_maxout_2013},
+The dependency label is computed by small Maxout network~\cite{goodfellow_maxout_2013},
 which takes the current word annotation $H_w$ and heads annotation $A_w$. This
 part is called \emph{labeler}.
 We investigated two variations of head annotation $A_w$
@@ -78,7 +78,7 @@ We investigated two variations of head annotation $A_w$
 \\
 \\
 \emph{Soft attention}\\
-Which is a weighted average of normalized attention \ref{eq:label_attention}
+Which is a weighted average of normalized attention~\ref{eq:label_attention}
 and words annotations $H$. 
 $$ A_w = \sum_{i=0}^{n} p(w,i)H_i $$
 \\
@@ -93,7 +93,7 @@ The \emph{scorer} give us a $n$x$n+1$ matrix of head dependency preference
 for each word. From this matrix we have find a set of dependencies that satisfy
 some constraints (exactly one root dependant, no cycles).
 We investigated two possibilities for such decoding: a greedy algorithm, and
-Chu-Liu-Edmonds \cite{edmonds_optimim_1966}.
+Chu-Liu-Edmonds~\cite{edmonds_optimim_1966}.
 
 \section{Training}
 \subsection{Training criterion}
@@ -117,16 +117,15 @@ So the final loss is:
 \end{equation}
 
 \subsection{Regularization, optimizer and hyperparameters} \label{sec:basic_params}
-\todo{Czy należy wszystko opisywać? weight decay, adadelta, dropout, spearmint itd.}
 Regularization is a essential part of  neural network training. It improves 
 generalization and prevents overfitting. One of the most popular regularization
-technique is called Dropout \cite{srivastava_dropout:_2014}. Using it, we randomly
+technique is called Dropout~\cite{srivastava_dropout:_2014}. Using it, we randomly
 drop part of the connections from a certain network layer during training.
 In our case dropout is applied to the \emph{reader} output, between the BiRNN
 layers of the \emph{tagger} and to the \emph{labeller}.
 
-The models are trained using Adedelta\cite{zeiler_adadelta:_2012} learning rule,
-with weight decay and adaptive gradient clipping \cite{chorowski_end--end_2014}.
+The models are trained using Adedelta~\cite{zeiler_adadelta:_2012} learning rule,
+with weight decay and adaptive gradient clipping~\cite{chorowski_end--end_2014}.
 All experiments are early stopped on validation set UAS.
 
 Hyperparameter selection is crucial for neural networks to obtain good results.
@@ -134,7 +133,7 @@ For example, comparing our first experiments with architecture depicted above to
 the best single-language results (using the same basic architecture) gave us
 about 5\% boost in UAS score on Polish language.
 
-To find the best hyperparameters we have used the Spearmint system \cite{snoek_practical_2012}
+To find the best hyperparameters we have used the Spearmint system~\cite{snoek_practical_2012}
 invoked on polish dataset. The chosen parameters are as follows.
 The \emph{reader} embeds each character into 15 dimensions, and
 contains 1050 filters (50$\cdot$k filters of length k for k = 1, 2,\dots, 6) 
@@ -154,17 +153,17 @@ We apply 20\% dropout to the \emph{reader} output, 70\% between the BiRNN
 layers of the \emph{tagger} and 50\% to the \emph{labeller}. The weight
 decay is 0.95. %Adadelta epsilon annealed from 1e-8 to 1e-12
 
-\section{Multilingual training}
+\section{Multilingual training} \label{sec:neural_multilingual}
 The big problem of learning to parse is small number of gold standard dependency
 trees for many languages (including Polish). With small number of examples
 neural networks do not generalize well and can more easily overfit.
 There also exist languages with good, standardized treebank like Czech Prague
-Treebank\cite{prague_treebank}.
+Treebank~\cite{prague_treebank}.
 
 Because our model is purely neural network we can incorporate a multitask learning
 \cite{caruana_multitask_learning}. It allows the network to learn multiple tasks
 at the same time, sharing common patterns and distinguishing differences.
-Additionally, because we are using Universal Dependencies treebanks \cite{nivre_universal_2015}
+Additionally, because we are using Universal Dependencies treebanks~\cite{nivre_universal_2015}
 we have common standardized format across many languages, which allowed for
 easy implementation of multitask learning and experiments across different languages.
 
