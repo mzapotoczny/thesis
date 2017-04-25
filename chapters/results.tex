@@ -4,9 +4,11 @@
 All experiments depicted in this section are based on configuration shown in section
 ~\ref{sec:basic_params}. In table \ref{tab:universal} we show our baseline results
 for subset of the UD languages (due to limited computational resources we were
-not able to train models for all of them)
-compared to state-of-the-art SyntaxNet\cite{andor_globally_2016}
-and recently relased ParseySaurus\cite{alberti_parsey_saurus_2017}, both from Google.
+not able to train models for all of them). The results are compared to
+SyntaxNet\cite{andor_globally_2016} and ParseySaurus\cite{alberti_parsey_saurus_2017},
+both from Google. The ParseySaurus is based on SyntaxNet, and uses characters
+as input, while the original SyntaxNet uses word embeddings. Both are transition-based,
+and needs no external POS tagger.
 
 \begin{table}[!htbp]
   \centering
@@ -17,7 +19,7 @@ and recently relased ParseySaurus\cite{alberti_parsey_saurus_2017}, both from Go
     Polish & 8 227 & 90.26 & 85.32 & 88.30 & 82.71 & \textbf{91.86} & \textbf{87.49}\\
     Russian & 5 030 & 83.29 & 79.22 & 81.75 & 77.71 & \textbf{84.27} & \textbf{80.65} \\
     German & 15 892 & 82.67 & 76.51 & 79.73 & 74.07 & \textbf{84.12} & \textbf{79.05}\\
-    English & 16 622 & 87.44 & 83.94 & 84.79 & 80.38 & \textbf{87.86} & \textbf{84.45}\\ % Zblizamy sie do saurusa a dopiero pratraining...
+    English & 16 622 & 87.44 & 83.94 & 84.79 & 80.38 & \textbf{87.86} & \textbf{84.45}\\ 
     French & 16 448 & \textbf{87.25} & \textbf{83.50} & 84.68 & 81.05 & 86.61 & 83.1\\
     Ancient Greek & 25 251 & \textbf{78.96} & \textbf{72.36} & 68.98 & 62.07 & 73.85 & 68.1
   \end{tabular}
@@ -27,16 +29,19 @@ and recently relased ParseySaurus\cite{alberti_parsey_saurus_2017}, both from Go
   \label{tab:universal}
 \end{table}
 
-\subsection{Impact of \emph{reader} and \emph{predictor}}
-words vs chars-per-word
+It is worth noting that SyntaxNet has different hyperparameters configuration
+for each language, while our parser uses the same configuration across all languages.
+In the following sections we will show impact of different network parameters
+on the result.
 
-baseline bez predictora
-\begin{table*}[tb]
+\subsection{Impact of \emph{reader} and \emph{predictor}}
+Firstly we will inspect the impact of different \emph{reader} and \emph{predictor}
+settings.
+\begin{table}[!htbp]
   \centering
-  \caption{Model performance on selected languages}
   \label{tab:results}
-  \begin{tabular}{l|cc|cc|cr}
-    & \multicolumn{2}{c|}{Czech} & \multicolumn{2}{c|}{English} & \multicolumn{2}{c|}{Polish} \\
+  \begin{tabular}{l|cc|cc|cc|}
+    training inputs & \multicolumn{2}{c|}{Czech} & \multicolumn{2}{c|}{English} & \multicolumn{2}{c|}{Polish} \\
     & UAS & LAS & UAS & LAS & UAS & LAS \\ 
     \multicolumn{7}{c}{Gold POS tags} \\  \hline
     base word & 
@@ -60,16 +65,25 @@ baseline bez predictora
     \textbf{90.1} & \textbf{86.7} & % results/inprogress/lab110-01/dependency_norec_smaller_cz_tags_l0_hard_restart/pretraining_best.zip
     \textbf{87.6} & \textbf{83.6} & % sonata2 local_storage/dependency_norec_spbest_en_tags_l0_hard/pretraining_best.zip
     \textbf{91.3} & \textbf{86} \\ % results/inprogress/lab110-17/dependency_norec_smaller_pl_tags_l0_hard/pretraining_best.zip
-
-    \multicolumn{7}{p{\textwidth}}{  Note: MaltParser results on
-      Czech are sub-optimal because due to lack of computational
-      resources we had to use a small dataset for parser optimization.}
   \end{tabular}
-\end{table*}
-\subsection{Gold POS tags}
+  \caption{Model performance on selected languages and different training inputs. Experiments were run on UD v 1.2} 
+\end{table}
 
+In the upper part "Gold POS tags" we show a favorable situation when we have access
+to gold pos tag (approved by human). The inputs are base words embedded in a vector - 
+basically instead of whole \emph{reader} part we have just simple table lookup.
+This setting allowed us to obtain best results (especially for Polish) but
+gold pos tag are not available in real-word setting so this result is noted just
+as a trivia.
 
-\subsection{Soft vs hard attention}
+The words and chars, soft att. settings don't use \emph{predictor}. Using just words
+as inputs (embedded in the same manner as base word) gives words results. This is
+easy to predict because most words in the dataset occurs only once and so the
+network doesn't have clue about role of most of the words.
+Instead using character-level input allows us to obtain much better results, especially
+because in morphosyntactically rich languages the word spelling catches many
+word features that can be used in deducing the pos tag information.
+
 
 
 \subsection{Impact of decoding algorithm}

@@ -181,4 +181,36 @@ common format we can try to combine data coming from different languages (see
 section~\ref{sec:neural_multilingual}).
 
 \section{Neural Networks}
+A neural network is a mathematical model loosely based on how brain works.
+%A typical, simple model consists of few layers, each containing many neurons.
+%Each neuron has incoming connections from previous layer and outgoing to the
+%next layer. Each neuron computes weighted sum of its input ......
+The models proven to be very flexible and obtained state of the art results in
+many tasks (\todotext{cytaty}). A neural network is defined by its topology,
+activation functions and parameters. The first two are choosen by the author,
+while the parameters are obtained by learning procedure.
+
+The topology of the network is telling us how the layers of neurons are connected
+to each other. Each layer have a number of neurons which have some incoming
+indicies $i$, associated activation function $\phi$ and some parameters $w$.
+The neuron combines the incoming signals, usually by taking weighted average
+and then applying the activation function: $ \phi ( \sum_{k=0}^{|i|} w_ki_k ) $.
+This value is then feeded to the connected neurons from the next layer.
+
+The activation function can have any form, but the most common are hyperbolic tangent
+$\tanh$ and ReLu \cite{nair_rectified_2010}.
+
+By the learning procedure we understand a optimization process that given a
+loss function $L$, data $x$ and some parameters $W$ to tune, tries to minimize $L(x)$.
+Because usually the data $x$ size is big we cannot use simple gradient descent
+algorithm on all data at once because it would not fit into the memory. Instead
+we are using stochastic gradient descent to train only on small subset of data
+at once (this subset is called a minibatch).
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{img/nn/neural_net.jpeg}
+  \caption{An sample neural network architecture\todotext{internet...}} 
+  \label{fig:sample_nn}
+\end{figure}
 
