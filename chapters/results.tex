@@ -9,6 +9,8 @@ SyntaxNet\cite{andor_globally_2016} and ParseySaurus\cite{alberti_parsey_saurus_
 both from Google. The ParseySaurus is based on SyntaxNet, and uses characters
 as input, while the original SyntaxNet uses word embeddings. Both are transition-based,
 and needs no external POS tagger.
+It is worth noting that SyntaxNet has different hyperparameters configuration
+for each language, while our parser uses the same configuration across all languages.
 
 \begin{table}[!htbp]
   \centering
@@ -29,8 +31,6 @@ and needs no external POS tagger.
   \label{tab:universal}
 \end{table}
 
-It is worth noting that SyntaxNet has different hyperparameters configuration
-for each language, while our parser uses the same configuration across all languages.
 In the following sections we will show impact of different network parameters
 on the result.
 
@@ -77,75 +77,158 @@ gold pos tag are not available in real-word setting so this result is noted just
 as a trivia.
 
 The words and chars, soft att. settings don't use \emph{predictor}. Using just words
-as inputs (embedded in the same manner as base word) gives words results. This is
+as inputs (embedded in the same manner as base word) gives worst results. This is
 easy to predict because most words in the dataset occurs only once and so the
-network doesn't have clue about role of most of the words.
-Instead using character-level input allows us to obtain much better results, especially
+network doesn't have a clue about role of most of the words.
+Instead, using character-level input allows us to obtain much better results, especially
 because in morphosyntactically rich languages the word spelling catches many
 word features that can be used in deducing the pos tag information.
 
+The result of adding a \emph{predictor} depends on attention type used.
+Used with soft attention it decreased the results in Czech and English, but increased
+in Polish. When hard attention is used it can obtain the best results in all cases.
+The intuition behind these results are that with hard attention the labbeler only
+sees annotation of the choosen head, and the error is backpropagated only to this
+element. On the other hand with soft attention the head annotation may refer
+to many incorrect words introducing more noise. Additionally the soft attention labeller
+error is backpropagated through all words, which can introduce even more noise.
 
 
 \subsection{Impact of decoding algorithm}
 
+In the table \ref{tab:edmonts_baseline} we show the comparison of greedy and
+Chu-Liu-Edmonds decoding algorithms.
 
-\subsection{Word pieces}
 \begin{table}[!htbp]
-    \centering
-    \begin{tabular}{c c c c}
-        \#pieces & UAS & LAS & LAB \\ \hline
-        \multicolumn{4}{c}{Polish}\\
-        25 & 90.29 &  84.91 &  90.17 \\
-        50 & \textbf{90.40} &  \textbf{85.46} &  \textbf{90.77} \\
-        75 &  90.23 & 84.87 &  90.40 \\
-        100 & 89.97 & 84.44 & 90.23 \\\hline
-        \multicolumn{4}{c}{Czech}\\
-        25 & 90.29 & 86.50 & 92.66\\
-        50 & 90.03 & 86.08 & 92.40\\
-        75 & 90.17 & 86.40 & 92.70\\
-        100 &90.84 & 87.31 & 93.20
-    \end{tabular}
-    \caption{Results on word pieces model. \#pieces denotes how many new
-    multi-character tokens were used. To convert word to pieces we
-    use a greedy algorithm in which we choose the longest piece that is equal
-    to prefix of word.}
-    \label{tab:word_pieces}
+  \centering
+  \begin{tabular}{l | c c}
+    language & Greedy UAS & Edmonds UAS \\ \hline
+      Czech & \textbf{91.41} & 91.40 \\
+      Polish &  \textbf{90.26} & 90.17 \\
+      Russian & \textbf{83.29} & 83.23 \\
+      German &  \textbf{82.67} & 82.66 \\
+      English & \textbf{87.44} & 87.41 \\
+      French &  \textbf{87.25} & 87.18 \\
+      Ancient Greek & \textbf{78.96} & 78.92
+  \end{tabular}
+  \caption{The comparison of greedy and edmonts decoding algorithms}
+  \label{tab:edmonts_baseline}
 \end{table}
 
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{img/examples/cle/attention.png}
+  \caption{A typical scorer output showing probabilities assigned for head-word location.} 
+  \label{fig:attention}
+\end{figure}
 
-\subsection{Pointer softening}
-\begin{table}[!htbp]
-    \centering
-    \begin{tabular}{c c c c c}
-        Language & Algorithm & UAS & LAS & LAB \\ \hline
-        \multirow{2}{*}{Polish}& Greedy & 90.91\% & 86.18\% & 91.16\% \\
-               & Edmonds & 90.90\% & 86.15\% & 91.16\% \\ \hline
-        \multirow{2}{*}{Czech}& Greedy & 90.38\% & 86.79\% & 92.79\% \\
-               & Edmonds & 90.37\% & 86.77\% & 92.79\% \\
-    \end{tabular}
-    \caption{Results of label softening. Instead of using one-hot vector as
-    groundtruth for the \textit{scorer} we set
-    0.51 for the correct position and distribute the rest uniformly}
-    \label{tab:soften}
-\end{table}
+Counterintuitively the CLE algorithm makes the decoding results slighty worse.
+We have investigated this and the problem lies in the confidence of the
+\emph{scorer} predictions which are very sharp (see figure \ref{fig:attention}).
+Additionaly non-top scores do not reflect alternatives but are rather only a noise,
+so when CLE algorithm finds a cycle it is very probable that it will break it
+in wrong place, creating another error. The example of such behaviour is depicted
+on figure \ref{fig:cle}.
 
+\begin{figure}[!htbp]
+  \centering
+  \resizebox{\textwidth}{!}{
+    \import{img/examples/cle/}{cle.pdf_tex}
+  }
+  \caption{Dependency tree for sentence "What to do to advert threat lurking on the ice?".
+    The dashed-dotted (zagrożenia\txtrightarrow lodzie), dotted (czyhającego\txtrightarrow uniknąć)
+    and dashed (zagrożenia\txtrightarrow uniknąć) arcs denote, respectively greedy, CLE, and groundtruth decodings.
+    The greedy decoder produced the incorrect dependency zagrożenia\txtrightarrow lodzie instead of
+    zagrożenia\txtrightarrow uniknąć which created a cycle zagrożenia\txtrightarrow lodzie\txtrightarrow czychającego\txtrightarrow zagrożenia.
+    However, the CLE algorithm replaced the good connection
+    czyhającego\txtrightarrow zagrożenia with czyhającego\txtrightarrow uniknąć
+    which removed the cycle but introduced a new error.} 
+  \label{fig:cle}
+\end{figure}
+
+We tried to counteract this by using label-smoothing regularization (LSR)
+\cite{szegedy_rethinking_2015}.
+It is a very simple method of regularization which changes 1-hot vector encoding
+of groundtruth data to some other distribution which have effect of lowering overconfidence
+of the network. In our case we soften the head position groundtruth vector by
+giving the proper head 51\% probability and uniformly distribute the rest 49\%
+among other words. Unfortunately this method did not improve the overall CLE algorithm
+score.
 
 \subsection{Recurrent state size}
+We have also investigated the impact of \emph{tagger} recurrent state size.
+It is desirable to have as small recurrent state size as possible because this
+part of the network is activated as many times as there are words in the sentence,
+making it a big performance factor.
+
 \begin{table}[!htbp]
     \centering
     \begin{tabular}{l c c c c}
-        Language & \% of recurrent state size & UAS & LAS & LAB \\ \hline \hline
-        \multirow{3}{*}{Polish}& 100\% & 90.26 & 85.32 & 90.79 \\
-        & 50\% & \textbf{90.54} & \textbf{85.64} & \textbf{90.84} \\
-        & 25\% & 89.07 & 82.80 & 89.03 \\ \hline
-        \multirow{3}{*}{Czech}& 100\% & \textbf{91.41} & \textbf{88.18} & \textbf{90.79} \\
-        & 50\% & 89.98 & 85.92 & 92.31\\
-        & 25\% & 85.56 & 79.16 & 87.88\\ \hline% ale tutaj to malo epok bylo
+        Language & \% of recurrent state size & UAS & LAS \\ \hline
+        \multirow{3}{*}{Polish}& 100\% & 90.26 & 85.32 \\
+        & 50\% & \textbf{90.54} & \textbf{85.64} \\
+        & 25\% & 89.07 & 82.80 \\ \hline
+        \multirow{3}{*}{Czech}& 100\% & \textbf{91.41} & \textbf{88.18}\\
+        & 50\% & 89.98 & 85.92\\
+        & 25\% & 85.56 & 79.16\\ \hline% ale tutaj to malo epok bylo
     \end{tabular}
     \label{tab:birnn_single_size}
     \caption{Impact of the \emph{tagger} recurrent state size on the performance.
     We report this value as percent of baseline rnn size.}
 \end{table}
+
+We can see that in small dataset language like Polish there is not a big difference
+between base and 50\% base, whereas in Czech the performance drop is significant.
+Bacause we want to use the same architecture for every language the original 548
+units recurrent state size is optimal.
+
+\subsection{Word pieces model}
+Following \cite{sennrich_subword_2015} we experimented with subword units.
+Instead of using single characters as inputs we can find frequent common characters groups and
+depict each word as combination of those units. Of course to be able to
+present every word, each single letter also has to be treated as small subword unit. 
+For example lets consider two polish words: \emph{lepszy} and \emph{najlepszy} (better, the best).
+The \emph{naj} prefix in polish used with adjective means that it is in superlative degree,
+so we can imagine that this letter composition is pretty common and thus will be
+treated as subword unit. Then those two words will be shown to the network as
+\emph{naj-l-e-p-s-z-y} and \emph{l-e-p-s-z-y} (- acting as subword delimiter).
+
+Our word pieces model are obtained as follows:
+first we compute word frequency dictionary  and initialiaze pieces dictionary with all characters in the dataset.
+From frequency dictionary we take the most common character bigram and we treat it as new character and replace all previous occurences
+with this new unit. The number of such iterations is a parameter given by the user.
+To convert word to pieces we use a greedy strategy. For word $w$ we find the longest
+piece $p$ that is prefix of $w$. The next step takes $w$ suffix of size $\|w\| - \|p\|$.
+
+\begin{table}[!htbp]
+    \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=7cm}}]{figure}[\FBwidth]
+    {\caption{Results on word pieces model. \#pieces denotes how many new
+    multi-character tokens were used. To convert word to pieces we
+    use a greedy algorithm in which we choose the longest piece that is equal
+    to prefix of word.}
+    \label{tab:word_pieces}}
+{
+    \begin{tabular}{c c c}
+        \#pieces & UAS & LAS \\ \hline
+        \multicolumn{3}{c}{Polish}\\
+        25 & 90.29 &  84.91 \\
+        50 & \textbf{90.40} &  \textbf{85.46}\\
+        75 &  90.23 & 84.87\\
+        100 & 89.97 & 84.44\\\hline
+        \multicolumn{3}{c}{Czech}\\
+        25 & 90.29 & 86.50\\
+        50 & 90.03 & 86.08\\
+        75 & 90.17 & 86.40\\
+        100 & \textbf{90.84} & \textbf{87.31}
+    \end{tabular}
+}
+\end{table}
+
+In table \ref{tab:word_pieces} we have depicted the results of word pieces model
+for different number od additional multi-character tokens. There is only minor
+improvement for Polish while for Czech we have actually worse results. Additionaly
+this input model is not well suited for multilanguage parser, because the pieces
+frequency is different for each language.
 
 \section{Multilanguage}
 \begin{table}[!htbp]
@@ -163,30 +246,25 @@ word features that can be used in deducing the pos tag information.
     We report this value as percent of baseline rnn size.}
 \end{table}
 
-\section{Error analysis}
-
-\begin{figure}[!htbp]
+\subsection{BETTER POS TAGGER}
+\begin{figure}[t]
   \centering
-  \resizebox{\textwidth}{!}{
-    \import{img/examples/cle/}{cle.pdf_tex}
+  \resizebox{0.8\textwidth}{!}{
+    {\Large
+      \import{img/examples/pos/}{bogumil.pdf_tex}
+    }
   }
-  \caption{CLE Example} 
-  \label{fig:cle}
-\end{figure}
-
-\begin{figure}[!htbp]
-  \centering
-  \resizebox{1\textwidth}{!}{
-    \import{img/examples/pos/}{bogumil.pdf_tex}
+  \\[5pt]
+  \resizebox{0.8\textwidth}{!}{
+    {\Large
+      \import{img/examples/pos/}{michal.pdf_tex}
+    }
   }
-  \caption{The model architecture.} 
-  \label{fig:architecture}
-\end{figure}
-\begin{figure}[!htbp]
-  \centering
-  \resizebox{1\textwidth}{!}{
-    \import{img/examples/pos/}{michal.pdf_tex}
-  }
-  \caption{The model architecture.} 
-  \label{fig:architecture}
+  \label{fig:pos_bad_good}
+  \caption{In the upper panel the sentence "Bogumił felt silent so
+    much that he almost stopped breathing." is incorrectly parsed.
+    We attribute the error to the \emph{reader} or to the \emph{tagger} because the predicted POS
+    tag for "Bogumił", a male given name, is wrong (VERB instead of
+    NOUN). In the lower panel we replace "Bogumił" with the  more common "Michał" the network assigns
+    a proper tag and the whole sentence becomes a valid parse tree.} 
 \end{figure}
