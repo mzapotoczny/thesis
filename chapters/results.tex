@@ -66,7 +66,7 @@ settings.
     \textbf{87.6} & \textbf{83.6} & % sonata2 local_storage/dependency_norec_spbest_en_tags_l0_hard/pretraining_best.zip
     \textbf{91.3} & \textbf{86} \\ % results/inprogress/lab110-17/dependency_norec_smaller_pl_tags_l0_hard/pretraining_best.zip
   \end{tabular}
-  \caption{Model performance on selected languages and different training inputs. Experiments were run on UD v 1.2} 
+  \caption{Model performance on selected languages and different training inputs. Experiments were run on \textbf{UD v 1.2}} 
 \end{table}
 
 In the upper part "Gold POS tags" we show a favorable situation when we have access
@@ -230,23 +230,78 @@ improvement for Polish while for Czech we have actually worse results. Additiona
 this input model is not well suited for multilanguage parser, because the pieces
 frequency is different for each language.
 
-\section{Multilanguage}
+\section{Multilanguage training}
+The main difference between multilanguage and single language configurations is
+that we have to decide which parts of the network should have shared weights.
+We tested it on 3 language pairs: Polish-Czech, Russian-Czech, Polish-Russian.
+They all are from the same slavic family, but Russian uses cyryllic alphabet as
+opossed to latin script for Polish and Czech. The main advantage of Czech language
+that made us choose it as auxiliary language is the quality and quantity of training data
+- it is over 6 times bigger than Polish and Russian datasets combined.
+The results of different sharing strategies are depicted in Table~\ref{tab:multi_baseline}.
+
+\begin{table}[!htbp]
+  \centering  
+  \begin{tabular}{l | l l c c}
+    Shared parts & Main lang & Aux lang & UAS & LAS \\ \hline
+      - & Polish & - & 90.31 & 85.21 \\
+    \emph{Parser} & Polish & Czech & 90.72 & 85.57 \\ % local_storage/multi/pl_cs_merge_generator
+    \emph{Tagger, Parser} & Polish & Czech & 91.19 & 86.37 \\ % sonata2:  /pio/lscratch/1/i248100/pl_cs_unification_exclude_pos
+    \emph{Tagger, POS Predictor, Parser} & Polish & Czech & 91.65 & 86.88 \\ % local_storage/dependency_pl_cs_new
+    \emph{Reader, Tagger, POS Predictor, Parser} & Polish & Czech & \textbf{91.91} & \textbf{87.77} \\\hline % sonata1: /pio/lscratch/1/i248100/multi_pl_cs_different_eos_merge_all
+    \emph{Parser} & Polish & Russian & 90.31 & 85.07 \\  % local_storage2/pl-ru-inc-generator
+    \emph{Tagger, POS Predictor, Parser} & Polish & Russian &
+    \textbf{91.34} & \textbf{86.36} \\ 
+    \emph{Reader, Tagger, POS Predictor, Parser} & Polish & Russian & 89.16 & 82.94 \\  %  local_storage2/multi_pl_ru_different_eos_merge_all
+\hline\hline % local_storage/multi/pl_ru_same_eos
+    - & Russian & - & 83.43 & 79.24 \\
+    \emph{Parser} & Russian & Czech & 83.15 & 78.69 \\  % sonata0: /pio/lscratch/1/i248100/ru-cs-parser
+    \emph{Tagger, POS Predictor, Parser} & Russian & Czech & 83.91 & 79.79 \\ %  local_storage/multi/ru_cs
+    \emph{Reader, Tagger, POS Predictor, Parser} & Russian & Czech & \textbf{84.78} & \textbf{80.35} % sonata1:  /pio/lscratch/1/i248100/ru-cs-all
+  \end{tabular}
+  \label{tab:multi_baseline}
+  \caption{Impact of parameter sharing strategies on main language parsing accuracy when multilingual training
+    is used for additional supervision.}
+\end{table}
+
+
+Multilingual training (Table~\ref{tab:multi_baseline}) improves the performance on low-resource languages.
+We observe that the optimal amount of parameter sharing depends on the similarity
+between languages and corpus size – while it is beneficial to share all parameters of the
+PL-CZ and RU-CZ parser, the PL-RU parser works best if the reader subnetworks are
+separated. 
+
+Simillary as in single language configuration we have tested the impact of \emph{tagger}
+recurrent state size on the results (see Table~\ref{tab:birnn_multi_size}).
+
 \begin{table}[!htbp]
     \centering
-    \begin{tabular}{l c c c c}
-        \% of recurrent state size & UAS & LAS & LAB \\ \hline 
-        200\% & 91.45 & 86.36& 91.05 \\
-        100\% & \textbf{91.65} & \textbf{86.88} & \textbf{91.57}\\
-        50\% & 89.53 & 83.66 & 89.55 \\
-        25\% & 87.28 & 78.93 & 85.41
+    \begin{tabular}{l c c c}
+        \% of recurrent state size & UAS & LAS \\ \hline 
+        200\% & 91.45 & 86.36\\
+        100\% & \textbf{91.65} & \textbf{86.88}\\
+        50\% & 89.53 & 83.66\\
+        25\% & 87.28 & 78.93
     \end{tabular}
     \label{tab:birnn_multi_size}
     \caption{Impact of the \emph{tagger} recurrent state size on the performance
-    of multilanguage pl-cs model.
+    of multilanguage pl-cz model.
     We report this value as percent of baseline rnn size.}
 \end{table}
 
-\subsection{BETTER POS TAGGER}
+The results are computed on best Polish-Czech model (with share all strategy). We can see
+that the recurrent state size have similar behaviour as in single language czech model - 
+the 50\% size has significant drop in the performance. It is worth noting that
+increasing the size changes the result only slighty (and are actually worse).
+This mean that choosen \emph{tagger} size is well-suited for both single and multi
+language parsers.
+
+\subsection{Polish-Polish multilang parser}
+After investigating results of the parser (this problem applies to both single
+and muli parser) we have found that if the \emph{tagger} assigns wrog POS tag to
+a particular word it can mislead the scorer and labeller producing wrong parse tree.
+In many cases after replacing wrong word with its synonym such that the \emph{tagger}
+will assing the right POS tag - the tree becomes valid parse. For an example see~\ref{fig:pos_bad_good}.
 \begin{figure}[t]
   \centering
   \resizebox{0.8\textwidth}{!}{
