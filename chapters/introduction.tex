@@ -138,19 +138,59 @@ andor_globally_2016}.
 
 \subsubsection{Graph based}
 Alternative approach is to use graph-based algorithms. The idea is that we define
-a space of candidate arcs, find a model to score each arc and then use some parsing
-algorithm to find dependency tree with highest score.
+a space of candidate arcs, find a model that scores each arc and then use some parsing
+algorithm to find a final dependency tree with the highest score.
 
-The candidate space and scoring depends on the used learning model, but we can
-distinguish two main parsing algorithms: Chu-Liu-Edmonds and Eisner.
+The candidate space and scoring depends on the used learning model.
+There exists many parsing algorithms, but one of the most popular is
+Chu-Liu-Edmonds \cite{edmonds_optimim_1966}.
+The Chu-Liu-Edmonds algorithm, given a directed graph produces minimum spanning
+arborescence (minimum spanning tree for directed grpah) - it allows us to produce
+any parse tree (including nonprojective). The idea is that each verticle choses
+an incoming edge of minimum weight. If this graph does not contain any cycle then
+we are done, else we break the cycle in place that would give us the best result.
 
-\noindent
-\textbf{Chu-Liu-Edmonts}
-\todotext{Tutaj opis cle}
+Formally the algorithm takes a directed graph $G = (V,E)$, root node $r \in V$,
+and weight function $w(e), e \in E$. The algorithm is listed as Algorihm \ref{lst:cle}. 
+The standard algorithm has $O(EV)$ running time, but there exist faster implementation
+by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time.
 
-\noindent
-\textbf{Eisner}
-\todotext{Tutaj opis eisnera}
+\begin{algorithm}[!htbp]
+    \KwData{Directed graph $G$, root node $r$, weight function $w$}
+    \KwResult{Spanning arborescence of minimum weight rooted at $r$}
+    \Funct{edmonds($G=(V,E)$, $r$, $w$)}{
+        Remove any edge from $G$ whose destination is $r$ \;
+        For each $v \in V - \{r\}$ find incoming edge of minimum weight, denote it as $\pi(v)$ \;
+        Denote new set of edges as $P = {(\pi(v), v) | v \in V - \{r\})}$ \;
+        \eIf{$P$ does not contain a cycle}{
+            \Return $P$
+        }{
+            Choose any cycle from $P$ and denote it as $C=(C_v,C_e)$ \;
+            Define a new directed graph $G'=(V',E')$, and weighting function $w'$, where $V' = V - C_v + {v_c}$ \;
+            Define $E'$ and $w'$ as follows:
+            \For{$(u,v) \in E$} {
+                \uIf{$u \not\in C_e, v \in C_e$}{
+                    $E' = E' + (u, v_c), w'(u, v_c) = w(u,v) - w(\pi(v), v)$
+                }
+                \uElseIf{$u \in C_e, v \not\in C_e$}{
+                    $E' = E' + (v_c, v), w'(v_c, v) = w(u,v)$
+                }
+                \ElseIf{$u \not\int C_e, V \not\in C_e$}{
+                    $E' = E' + (u, v), w'(u,v) = w(u,v)$
+                }
+                For each new edge remember its origin \;
+            }
+            Denote $A' = \text{edmonts}(G', r, w')$ \;
+            Let $(u, v_c)$ be (unique) incoming edge to $v_c$ in $A'$ \;
+            Let $(u,v) \in E (v \in C)$ be a corresponding edge from $G$ \;
+            Remove edge $(\pi(v), v)$ from $C$ (breaking the cycle) \;
+            Each remaining edge in $C$ togeter with edges from $E$ that are also present
+            in $A'$ forms a minimum spanning arborescence. \;
+        }
+    }
+ \caption{Chu-Liu-Edmonds Algorithm}
+ \label{lst:cle}
+\end{algorithm}
 
 \subsection{Evaluation of parsing algorithms}
 Having obtained dependency tree for a particular sentence we have to be able
@@ -186,7 +226,9 @@ A neural network is a mathematical model loosely based on how brain works.
 %Each neuron has incoming connections from previous layer and outgoing to the
 %next layer. Each neuron computes weighted sum of its input ......
 The models proven to be very flexible and obtained state of the art results in
-many tasks (\todotext{cytaty}). A neural network is defined by its topology,
+many tasks like machine translation~\cite{bahdanau_neural_2014},
+caption generation~\cite{xu_show_2015} or image recognition~\cite{szegedy_goglenet_2014}
+A neural network is defined by its topology,
 activation functions and parameters. The first two are choosen by the author,
 while the parameters are obtained by learning procedure.
 

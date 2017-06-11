@@ -301,8 +301,9 @@ After investigating results of the parser (this problem applies to both single
 and muli parser) we have found that if the \emph{tagger} assigns wrog POS tag to
 a particular word it can mislead the scorer and labeller producing wrong parse tree.
 In many cases after replacing wrong word with its synonym such that the \emph{tagger}
-will assing the right POS tag - the tree becomes valid parse. For an example see~\ref{fig:pos_bad_good}.
-\begin{figure}[t]
+will assing the right POS tag - the tree becomes valid parse. For an example see Figure~\ref{fig:pos_bad_good}.
+
+\begin{figure}[htbp]
   \centering
   \resizebox{0.8\textwidth}{!}{
     {\Large
@@ -315,11 +316,14 @@ will assing the right POS tag - the tree becomes valid parse. For an example see
       \import{img/examples/pos/}{michal.pdf_tex}
     }
   }
-  \label{fig:pos_bad_good}
   \caption{In the upper panel the sentence "Bogumił felt silent so
     much that he almost stopped breathing." is incorrectly parsed.
     We attribute the error to the \emph{reader} or to the \emph{tagger} because the predicted POS
     tag for "Bogumił", a male given name, is wrong (VERB instead of
     NOUN). In the lower panel we replace "Bogumił" with the  more common "Michał" the network assigns
     a proper tag and the whole sentence becomes a valid parse tree.} 
+  \label{fig:pos_bad_good}
 \end{figure}
+
+\todotext{Podsumować wyniki polsko-polskie}
+
