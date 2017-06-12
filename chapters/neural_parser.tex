@@ -1,4 +1,5 @@
 \chapter{Neural dependency parser}
+\todotext{Tutaj dodać tekst mówiący o czym będzie ten rozdział}
 \section{Overview of the network architecture}
 The network architecture consists of three main parts: reader, tagger and parser
 (see Figure~\ref{fig:architecture}). The reader subnetwork is evaluated on
@@ -72,7 +73,7 @@ we have to normalize it:
 \end{equation}
 The dependency label is computed by small Maxout network~\cite{goodfellow_maxout_2013},
 which takes the current word annotation $H_w$ and heads annotation $A_w$. This
-part is called \emph{labeler}.
+part is called \emph{labeller}.
 We investigated two variations of head annotation $A_w$
 \\
 \\

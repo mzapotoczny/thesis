@@ -87,8 +87,8 @@ word features that can be used in deducing the pos tag information.
 The result of adding a \emph{predictor} depends on attention type used.
 Used with soft attention it decreased the results in Czech and English, but increased
 in Polish. When hard attention is used it can obtain the best results in all cases.
-The intuition behind these results are that with hard attention the labbeler only
-sees annotation of the choosen head, and the error is backpropagated only to this
+The intuition behind these results are that with hard attention the labeller only
+sees annotation of the chosen head, and the error is backpropagated only to this
 element. On the other hand with soft attention the head annotation may refer
 to many incorrect words introducing more noise. Additionally the soft attention labeller
 error is backpropagated through all words, which can introduce even more noise.
@@ -122,10 +122,10 @@ Chu-Liu-Edmonds decoding algorithms.
   \label{fig:attention}
 \end{figure}
 
-Counterintuitively the CLE algorithm makes the decoding results slighty worse.
+Counter intuitively the CLE algorithm makes the decoding results slightly worse.
 We have investigated this and the problem lies in the confidence of the
 \emph{scorer} predictions which are very sharp (see figure \ref{fig:attention}).
-Additionaly non-top scores do not reflect alternatives but are rather only a noise,
+Additionally non-top scores do not reflect alternatives but are rather only a noise,
 so when CLE algorithm finds a cycle it is very probable that it will break it
 in wrong place, creating another error. The example of such behaviour is depicted
 on figure \ref{fig:cle}.
@@ -179,7 +179,7 @@ making it a big performance factor.
 
 We can see that in small dataset language like Polish there is not a big difference
 between base and 50\% base, whereas in Czech the performance drop is significant.
-Bacause we want to use the same architecture for every language the original 548
+Because we want to use the same architecture for every language the original 548
 units recurrent state size is optimal.
 
 \subsection{Word pieces model}
@@ -194,8 +194,8 @@ treated as subword unit. Then those two words will be shown to the network as
 \emph{naj-l-e-p-s-z-y} and \emph{l-e-p-s-z-y} (- acting as subword delimiter).
 
 Our word pieces model are obtained as follows:
-first we compute word frequency dictionary  and initialiaze pieces dictionary with all characters in the dataset.
-From frequency dictionary we take the most common character bigram and we treat it as new character and replace all previous occurences
+first we compute word frequency dictionary  and initialize pieces dictionary with all characters in the dataset.
+From frequency dictionary we take the most common character bigram and we treat it as new character and replace all previous occurrences
 with this new unit. The number of such iterations is a parameter given by the user.
 To convert word to pieces we use a greedy strategy. For word $w$ we find the longest
 piece $p$ that is prefix of $w$. The next step takes $w$ suffix of size $\|w\| - \|p\|$.
@@ -226,7 +226,7 @@ piece $p$ that is prefix of $w$. The next step takes $w$ suffix of size $\|w\| -
 
 In table \ref{tab:word_pieces} we have depicted the results of word pieces model
 for different number od additional multi-character tokens. There is only minor
-improvement for Polish while for Czech we have actually worse results. Additionaly
+improvement for Polish while for Czech we have actually worse results. Additionally
 this input model is not well suited for multilanguage parser, because the pieces
 frequency is different for each language.
 
@@ -234,8 +234,8 @@ frequency is different for each language.
 The main difference between multilanguage and single language configurations is
 that we have to decide which parts of the network should have shared weights.
 We tested it on 3 language pairs: Polish-Czech, Russian-Czech, Polish-Russian.
-They all are from the same slavic family, but Russian uses cyryllic alphabet as
-opossed to latin script for Polish and Czech. The main advantage of Czech language
+They all are from the same Slavic family, but Russian uses Cyrillic alphabet as
+opposed to Latin script for Polish and Czech. The main advantage of Czech language
 that made us choose it as auxiliary language is the quality and quantity of training data
 - it is over 6 times bigger than Polish and Russian datasets combined.
 The results of different sharing strategies are depicted in Table~\ref{tab:multi_baseline}.
@@ -271,7 +271,7 @@ between languages and corpus size – while it is beneficial to share all parame
 PL-CZ and RU-CZ parser, the PL-RU parser works best if the reader subnetworks are
 separated. 
 
-Simillary as in single language configuration we have tested the impact of \emph{tagger}
+Similarly as in single language configuration we have tested the impact of \emph{tagger}
 recurrent state size on the results (see Table~\ref{tab:birnn_multi_size}).
 
 \begin{table}[!htbp]
@@ -290,18 +290,18 @@ recurrent state size on the results (see Table~\ref{tab:birnn_multi_size}).
 \end{table}
 
 The results are computed on best Polish-Czech model (with share all strategy). We can see
-that the recurrent state size have similar behaviour as in single language czech model - 
+that the recurrent state size have similar behaviour as in single language Czech model - 
 the 50\% size has significant drop in the performance. It is worth noting that
-increasing the size changes the result only slighty (and are actually worse).
-This mean that choosen \emph{tagger} size is well-suited for both single and multi
+increasing the size changes the result only slightly (and are actually worse).
+This mean that chosen \emph{tagger} size is well-suited for both single and multi
 language parsers.
 
 \subsection{Polish-Polish multilang parser}
 After investigating results of the parser (this problem applies to both single
-and muli parser) we have found that if the \emph{tagger} assigns wrog POS tag to
+and multi parser) we have found that if the \emph{tagger} assigns wrong POS tag to
 a particular word it can mislead the scorer and labeller producing wrong parse tree.
 In many cases after replacing wrong word with its synonym such that the \emph{tagger}
-will assing the right POS tag - the tree becomes valid parse. For an example see Figure~\ref{fig:pos_bad_good}.
+will assign the right POS tag - the tree becomes valid parse. For an example see Figure~\ref{fig:pos_bad_good}.
 
 \begin{figure}[htbp]
   \centering
@@ -325,5 +325,5 @@ will assing the right POS tag - the tree becomes valid parse. For an example see
   \label{fig:pos_bad_good}
 \end{figure}
 
-\todotext{Podsumować wyniki polsko-polskie}
+\todotext{Podsumować wyniki polsko-polskie. Czy w ogóle to dodawać...}
 

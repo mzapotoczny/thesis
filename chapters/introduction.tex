@@ -3,7 +3,7 @@ The ability to communicate with the user in a natural language is a major drivin
 force in development of natural language processing algorithms. One of the basic
 tasks in a NLP pipeline is parsing by which we can describe sentence structure.
 There exist two basic parsing techniques: constituency and dependency parsing.
-With constituency parser we break the sentence into phrases, which can be furher
+With constituency parser we break the sentence into phrases, which can be further
 broken into smaller sub-phrases. Example of such parsing is shown in figure
 \ref{fig:constituency_tree}.
 
@@ -16,7 +16,7 @@ broken into smaller sub-phrases. Example of such parsing is shown in figure
 
 In dependency parsing each word (called \emph{dependent})
 is connected via labelled arc to another word of the sentence (called \emph{head})
-or to the special \emph{ROOT} vertice, forming a directed tree.
+or to the special \emph{ROOT} vertex, forming a directed tree.
 Example of such parsing is depicted on figure~\ref{fig:dependency_tree}.
 
 \begin{figure}[!htbp]
@@ -34,13 +34,13 @@ A major advantage of dependency parsers over constituency ones are their
 independence from the word ordering. It is important in morphologically rich
 languages like Polish or Czech where the ordering is very flexible, and thus
 related words can be far apart from each other.
-Additionaly the head-dependent relationship is a good approximation to semantic
+Additionally the head-dependent relationship is a good approximation to semantic
 relationship between words~\cite{covington_fundamental_2001} which is important
 for tasks like question answering or information extraction.
 
 The labels of head-dependent arcs tells us about grammatical function that
 dependent word have in respect to the head. In table~\ref{tab:label_samples}
-we show some of the most popular labels for the english language.
+we show some of the most popular labels for the English language.
 
 \begin{table}[!htbp]
     \centering
@@ -67,7 +67,7 @@ to every word between head and dependent in the sentence. A dependency tree is
 projective if all its arcs are projective.
 Intuitively we can say that nonprojective trees are trees that cannot be drawn
 without crossing the edges (see figure~\ref{fig:dependency_nonproj}).
-Altough English dataset has less than 5\% of nonprojective sentences other
+Although English dataset has less than 5\% of nonprojective sentences other
 languages can have significant amount - like Czech (12\%) or Ancient Greek (63\%)~\cite{straka_parsing_2015}.
 It is important to acknowledge this fact because some of the presented parsing
 methods can only produce projective trees.
@@ -83,13 +83,14 @@ methods can only produce projective trees.
 \end{figure}
 
 \subsection{Parsing algorithms}
-In following section we will present two basic approaches to dependency parsing.
-Although the differ in complexity and output flexibility, both of them depends
+In the following section we will present two basic approaches to dependency parsing.
+Although they differ in complexity and output flexibility, both of them depend
 on supervised machine learning techniques.
 
 \subsubsection{Transition based}
-In transition based parsing we find a transition sequence from initial configuration
-to terminal one. A configuration $c$ is a triple $(s, b, A)$ containing stack $s$,
+\todotext{Tu będzie łatwiej czytać od "końca"}
+In transition based parsing we find a transition sequence from an initial configuration
+to a terminal one. A configuration $c$ is a triple $(s, b, A)$ containing stack $s$,
 buffer $b$ and set of dependency arcs $A$. For given sentence $w_1, \cdots w_n$
 the corresponding initial configuration would be $(\text{[ROOT]}, [w_1, \cdots w_n], \emptyset)$.
 The terminal configuration is $(\text{ROOT}, [], A)$ in which $A$ is resulting parse tree.
@@ -120,7 +121,7 @@ An example of parsing sequence is shown in table~\ref{tab:transition_parse}.
         $[$ROOT$]$ & $[$$]$ & - & - \\
     \end{tabular}
 }
-    \caption{Transitions neede to parse sentence "He has good control"}
+    \caption{Transitions needed to parse sentence "He has good control"}
     \label{tab:transition_parse}
 \end{table}
 
@@ -145,13 +146,13 @@ The candidate space and scoring depends on the used learning model.
 There exists many parsing algorithms, but one of the most popular is
 Chu-Liu-Edmonds \cite{edmonds_optimim_1966}.
 The Chu-Liu-Edmonds algorithm, given a directed graph produces minimum spanning
-arborescence (minimum spanning tree for directed grpah) - it allows us to produce
-any parse tree (including nonprojective). The idea is that each verticle choses
+arborescence (minimum spanning tree for directed graph) - it allows us to produce
+any parse tree (including nonprojective). The idea is that each vertex chooses 
 an incoming edge of minimum weight. If this graph does not contain any cycle then
 we are done, else we break the cycle in place that would give us the best result.
 
 Formally the algorithm takes a directed graph $G = (V,E)$, root node $r \in V$,
-and weight function $w(e), e \in E$. The algorithm is listed as Algorihm \ref{lst:cle}. 
+and weight function $w(e), e \in E$. The algorithm is listed as Algorithm \ref{lst:cle}. 
 The standard algorithm has $O(EV)$ running time, but there exist faster implementation
 by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time.
 
@@ -184,7 +185,7 @@ by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time.
             Let $(u, v_c)$ be (unique) incoming edge to $v_c$ in $A'$ \;
             Let $(u,v) \in E (v \in C)$ be a corresponding edge from $G$ \;
             Remove edge $(\pi(v), v)$ from $C$ (breaking the cycle) \;
-            Each remaining edge in $C$ togeter with edges from $E$ that are also present
+            Each remaining edge in $C$ together with edges from $E$ that are also present
             in $A'$ forms a minimum spanning arborescence. \;
         }
     }
@@ -193,16 +194,16 @@ by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time.
 \end{algorithm}
 
 \subsection{Evaluation of parsing algorithms}
-Having obtained dependency tree for a particular sentence we have to be able
-to compare it with gold-standard parse.
+Having predicted dependency tree for a particular sentence we have to be able
+to compare it with the gold-standard parse.
 There are two main evaluation metrics:
 \begin{itemize}
-    \item \textbf{Unlabelled Attachnment Score} (UAS), is a percentage of words
+    \item \textbf{Unlabelled Attachment Score} (UAS), is a percentage of words
         with correct predicted head
-    \item \textbf{Labelled Attachnment Score} (LAS), is a percentage of words
+    \item \textbf{Labelled Attachment Score} (LAS), is a percentage of words
         with correct predicted head \textbf{and} correct predicted label
 \end{itemize}
-In the experimental section we will show both scores, whenewer available.
+In the experimental section we will show both scores, whenever available.
 
 \subsection{Universal Dependencies}
 Up till recently most development of dependency parsers was done in single language
@@ -216,7 +217,7 @@ and the Interset interlingua~\cite{zeman_reusable_2008}.
 The UD project unifies part of speech tags and dependency relations labels
 for 30+ languages under common CONNL-U format.
 The main advantage is that we can use the same parsing system for every language
-(data has consistent format) additionaly because the morphosyntactical data has
+(data has consistent format) additionally because the morphosyntactical data has
 common format we can try to combine data coming from different languages (see
 section~\ref{sec:neural_multilingual}).
 
@@ -229,12 +230,12 @@ The models proven to be very flexible and obtained state of the art results in
 many tasks like machine translation~\cite{bahdanau_neural_2014},
 caption generation~\cite{xu_show_2015} or image recognition~\cite{szegedy_goglenet_2014}
 A neural network is defined by its topology,
-activation functions and parameters. The first two are choosen by the author,
+activation functions and parameters. The first two are chosen by the author,
 while the parameters are obtained by learning procedure.
 
 The topology of the network is telling us how the layers of neurons are connected
 to each other. Each layer have a number of neurons which have some incoming
-indicies $i$, associated activation function $\phi$ and some parameters $w$.
+indices $i$, associated activation function $\phi$ and some parameters $w$.
 The neuron combines the incoming signals, usually by taking weighted average
 and then applying the activation function: $ \phi ( \sum_{k=0}^{|i|} w_ki_k ) $.
 This value is then feeded to the connected neurons from the next layer.

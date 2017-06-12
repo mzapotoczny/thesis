@@ -1,12 +1,14 @@
 \chapter{Summary}
-We have demonstrated a graph-based dependency parser implemented as a single deep
+We have demonstrated a nonprojective graph-based dependency parser implemented as a single deep
 neural network that directly produces parse trees from characters and does not require
 other NLP tools such as a POS tagger. The parser is trained in an end-to-end manner,
 and has separate cost terms that pertain to label accuracy,
 head word localization and optionally POS tagging. On
 morphologically rich languages the parser is competitive
 with other state-of-the-art parsers.
-We have established that the multilingual training performance depends heavily
-on degree of parameter sharing, and can differ depending on language similarity
-and corpus size.
 
+With additional experiments we have established that the multilingual training
+performance depends heavily on degree of parameter sharing, and can differ
+depending on language similarity and corpus size. The decoding
+algorithm used does not have a big impact on the performance of the system,
+so simple greedy one is sufficient.
