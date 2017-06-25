@@ -1,6 +1,6 @@
 %% Creator: Inkscape inkscape 0.92.1, www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
-%% Accompanies image file 'cle.pdf' (pdf, eps, ps)
+%% Accompanies image file 'constituent.pdf' (pdf, eps, ps)
 %%
 %% To include the image in your LaTeX document, write
 %%   \input{<filename>.pdf_tex}
@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{788.9112389bp}%
+    \setlength{\unitlength}{177.970158bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,30 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.15035747)%
-    \put(0.15581771,0.01911381){\makebox(0,0)[b]{\smash{ROOT}}}%
-    \put(0.25156303,0.01911381){\makebox(0,0)[b]{\smash{Co}}}%
-    \put(0.32821457,0.01911381){\makebox(0,0)[b]{\smash{zrobić}}}%
-    \put(0.39506139,0.01911381){\makebox(0,0)[b]{\smash{,}}}%
-    \put(0.45100583,0.01911381){\makebox(0,0)[b]{\smash{aby}}}%
-    \put(0.53588209,0.01911381){\makebox(0,0)[b]{\smash{uniknąć}}}%
-    \put(0.64045656,0.01911381){\makebox(0,0)[b]{\smash{czyhającego}}}%
-    \put(0.7334238,0.01911381){\makebox(0,0)[b]{\smash{na}}}%
-    \put(0.82581067,0.01911381){\makebox(0,0)[b]{\smash{lodzie}}}%
-    \put(0.91587608,0.01911381){\makebox(0,0)[b]{\smash{zagrożenia}}}%
-    \put(0.99781641,0.01911381){\makebox(0,0)[b]{\smash{?}}}%
-    \put(0.01300961,0.00010027){\transparent{0}\makebox(0,0)[b]{\smash{ROOT}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{cle.pdf}}%
-    \put(-0.05670674,0.1553053){\makebox(0,0)[lb]{\smash{}}}%
-    \put(0.16987135,0.04953549){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.1175841,0.06723379){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.43130759,0.06723379){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.48359484,0.04953549){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.37902037,0.09391791){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.79731832,0.09391791){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.79731832,0.04953549){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.74503107,0.06723379){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.90189282,0.04953549){\makebox(0,0)[b]{\smash{}}}%
-    \put(0.64045656,0.12886285){\makebox(0,0)[b]{\smash{}}}%
+  \begin{picture}(1,0.70640767)%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{constituent.pdf}}%
   \end{picture}%
 \endgroup%

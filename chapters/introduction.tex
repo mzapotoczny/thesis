@@ -1,23 +1,24 @@
 \chapter{Introduction}
 The ability to communicate with the user in a natural language is a major driving
 force in development of natural language processing algorithms. One of the basic
-tasks in a NLP pipeline is parsing by which we can describe sentence structure.
+tasks in a NLP pipeline is parsing by which we can describe structure of sentences.
 There exist two basic parsing techniques: constituency and dependency parsing.
-With constituency parser we break the sentence into phrases, which can be further
-broken into smaller sub-phrases. Example of such parsing is shown in figure
-\ref{fig:constituency_tree}.
+With a constituency parser we break the sentence into phrases, which can be further
+broken into smaller sub-phrases. Example of such parsing is shown in Figure~\ref{fig:constituency_tree}.
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=0.4\linewidth]{img/examples/dep/constituent.png}
-  \caption{A sample constituency parse tree\todotext{ściągnięte z internetu, przegenerować wektorowo}} 
+  \resizebox{0.5\textwidth}{!}{
+    \import{img/examples/dep/}{constituent.pdf_tex}
+  }
+  \caption{A sample constituency parse tree} 
   \label{fig:constituency_tree}
 \end{figure}
 
-In dependency parsing each word (called \emph{dependent})
-is connected via labelled arc to another word of the sentence (called \emph{head})
+In dependency parsing each word (called the \emph{dependent})
+is connected via a labelled arc to another word of the sentence (called the \emph{head})
 or to the special \emph{ROOT} vertex, forming a directed tree.
-Example of such parsing is depicted on figure~\ref{fig:dependency_tree}.
+Example of such parsing is depicted in Figure~\ref{fig:dependency_tree}.
 
 \begin{figure}[!htbp]
   \centering
@@ -66,7 +67,7 @@ We say that head-dependent arc is projective is there exists a path from head
 to every word between head and dependent in the sentence. A dependency tree is
 projective if all its arcs are projective.
 Intuitively we can say that nonprojective trees are trees that cannot be drawn
-without crossing the edges (see figure~\ref{fig:dependency_nonproj}).
+without crossing the edges (see Figure~\ref{fig:dependency_nonproj}).
 Although English dataset has less than 5\% of nonprojective sentences other
 languages can have significant amount - like Czech (12\%) or Ancient Greek (63\%)~\cite{straka_parsing_2015}.
 It is important to acknowledge this fact because some of the presented parsing
@@ -88,12 +89,12 @@ Although they differ in complexity and output flexibility, both of them depend
 on supervised machine learning techniques.
 
 \subsubsection{Transition based}
-\todotext{Tu będzie łatwiej czytać od "końca"}
+A configuration $c$ is a triple $(s, b, A)$ containing stack $s$,
+buffer $b$ and set of dependency arcs $A$.
 In transition based parsing we find a transition sequence from an initial configuration
-to a terminal one. A configuration $c$ is a triple $(s, b, A)$ containing stack $s$,
-buffer $b$ and set of dependency arcs $A$. For given sentence $w_1, \cdots w_n$
-the corresponding initial configuration would be $(\text{[ROOT]}, [w_1, \cdots w_n], \emptyset)$.
-The terminal configuration is $(\text{ROOT}, [], A)$ in which $A$ is resulting parse tree.
+to a terminal one.  For given sentence $w_1, \cdots w_n$
+the initial configuration is $(\text{[ROOT]}, [w_1, \cdots w_n], \emptyset)$.
+and the terminal one is $(\text{ROOT}, [], A)$ in which $A$ is a resulting parse tree.
 There are three possible transitions:
 \begin{itemize}
     \item {\ttfamily LEFTARC(l)} - Pop from the stack elements $s_1$ and $s_2$,
@@ -125,21 +126,23 @@ An example of parsing sequence is shown in table~\ref{tab:transition_parse}.
     \label{tab:transition_parse}
 \end{table}
 
-Because every word of the sentence has be shifted to the stack exactly once
+Because every word of the sentence has to be shifted to the stack exactly once
 and {\ttfamily ARC} operations reduce stack size by one we will have exactly
-$2n$ transitions from initial to terminal configuration, so the time complexity of this
+$2n$ transitions from initial to terminal configuration. Thus the time complexity of this
 algorithm is $O(n)$ where $n$ is number of words in a sentence.
 Using this algorithm we can represent any projective tree 
 \cite{nivre_algorithms_2008} (nonprojectives cannot be represented).
 
+\begin{sloppypar}
 The decision which transition to use between consecutive configurations is
 obtained through machine learning techniques. This can vary from simple
 linear SVM~\cite{nivre_maltparser:_2005} to neural networks~\cite{chen_fast_2014,
 andor_globally_2016}.
+\end{sloppypar}
 
 \subsubsection{Graph based}
 Alternative approach is to use graph-based algorithms. The idea is that we define
-a space of candidate arcs, find a model that scores each arc and then use some parsing
+a space of candidate arcs, find a model that scores each arc and then use some tree building 
 algorithm to find a final dependency tree with the highest score.
 
 The candidate space and scoring depends on the used learning model.
@@ -147,17 +150,16 @@ There exists many parsing algorithms, but one of the most popular is
 Chu-Liu-Edmonds \cite{edmonds_optimim_1966}.
 The Chu-Liu-Edmonds algorithm, given a directed graph produces minimum spanning
 arborescence (minimum spanning tree for directed graph) - it allows us to produce
-any parse tree (including nonprojective). The idea is that each vertex chooses 
+any parse tree (including nonprojective ones). 
+
+Formally we present this method as Algorithm \ref{lst:cle}, but the general 
+idea is that each vertex chooses 
 an incoming edge of minimum weight. If this graph does not contain any cycle then
 we are done, else we break the cycle in place that would give us the best result.
 
-Formally the algorithm takes a directed graph $G = (V,E)$, root node $r \in V$,
-and weight function $w(e), e \in E$. The algorithm is listed as Algorithm \ref{lst:cle}. 
-The standard algorithm has $O(EV)$ running time, but there exist faster implementation
-by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time.
 
 \begin{algorithm}[!htbp]
-    \KwData{Directed graph $G$, root node $r$, weight function $w$}
+    \KwData{Directed graph $G = (V,E)$, root node $r \in V$, weight function $w(e), e \in E$}
     \KwResult{Spanning arborescence of minimum weight rooted at $r$}
     \Funct{edmonds($G=(V,E)$, $r$, $w$)}{
         Remove any edge from $G$ whose destination is $r$ \;
@@ -176,7 +178,7 @@ by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time.
                 \uElseIf{$u \in C_e, v \not\in C_e$}{
                     $E' = E' + (v_c, v), w'(v_c, v) = w(u,v)$
                 }
-                \ElseIf{$u \not\int C_e, V \not\in C_e$}{
+                \ElseIf{$u \not\in C_e, V \not\in C_e$}{
                     $E' = E' + (u, v), w'(u,v) = w(u,v)$
                 }
                 For each new edge remember its origin \;
@@ -189,7 +191,8 @@ by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time.
             in $A'$ forms a minimum spanning arborescence. \;
         }
     }
- \caption{Chu-Liu-Edmonds Algorithm}
+ \caption{Chu-Liu-Edmonds Algorithm.The standard algorithm has $O(EV)$ running time, but there exist faster implementation
+    by \cite{gabow_efficient_1986} with $O(E + V\log V)$ running time. }
  \label{lst:cle}
 \end{algorithm}
 
@@ -222,28 +225,25 @@ common format we can try to combine data coming from different languages (see
 section~\ref{sec:neural_multilingual}).
 
 \section{Neural Networks}
-A neural network is a mathematical model loosely based on how brain works.
-%A typical, simple model consists of few layers, each containing many neurons.
-%Each neuron has incoming connections from previous layer and outgoing to the
-%next layer. Each neuron computes weighted sum of its input ......
-The models proven to be very flexible and obtained state of the art results in
+A neural network is a mathematical model loosely based on how the brain works.
+The models were proven to be very flexible and obtained state of the art results in
 many tasks like machine translation~\cite{bahdanau_neural_2014},
 caption generation~\cite{xu_show_2015} or image recognition~\cite{szegedy_goglenet_2014}
 A neural network is defined by its topology,
 activation functions and parameters. The first two are chosen by the author,
-while the parameters are obtained by learning procedure.
+while the parameters are obtained by a learning procedure.
 
 The topology of the network is telling us how the layers of neurons are connected
-to each other. Each layer have a number of neurons which have some incoming
+to each other. Each layer has a number of neurons which have some incoming
 indices $i$, associated activation function $\phi$ and some parameters $w$.
 The neuron combines the incoming signals, usually by taking weighted average
 and then applying the activation function: $ \phi ( \sum_{k=0}^{|i|} w_ki_k ) $.
-This value is then feeded to the connected neurons from the next layer.
+This value is then fed to the connected neurons from the next layer.
 
 The activation function can have any form, but the most common are hyperbolic tangent
-$\tanh$ and ReLu \cite{nair_rectified_2010}.
+$\tanh$ and ReLU \cite{nair_rectified_2010}.
 
-By the learning procedure we understand a optimization process that given a
+By the learning procedure we understand an optimization process that given a
 loss function $L$, data $x$ and some parameters $W$ to tune, tries to minimize $L(x)$.
 Because usually the data $x$ size is big we cannot use simple gradient descent
 algorithm on all data at once because it would not fit into the memory. Instead
@@ -253,7 +253,7 @@ at once (this subset is called a minibatch).
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.6\linewidth]{img/nn/neural_net.jpeg}
-  \caption{An sample neural network architecture\todotext{internet...}} 
+  \caption{An sample neural network architecture} 
   \label{fig:sample_nn}
 \end{figure}
 

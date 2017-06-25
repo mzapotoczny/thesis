@@ -36,14 +36,14 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1438"
-     inkscape:window-height="880"
+     inkscape:window-width="1829"
+     inkscape:window-height="1060"
      id="namedview114"
      showgrid="false"
-     inkscape:zoom="1.5281764"
-     inkscape:cx="448.1727"
-     inkscape:cy="6.831136"
-     inkscape:window-x="1366"
+     inkscape:zoom="2.1611678"
+     inkscape:cx="403.84933"
+     inkscape:cy="120.00969"
+     inkscape:window-x="0"
      inkscape:window-y="18"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg112" />
@@ -129,56 +129,56 @@
      d="m 116.57602,122.91883 c 27.5,-12 50.91182,-12 78.41182,0"
      id="path48"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w2 w0"
      d="m 194.98784,122.91883 c -55,-36.822031 -123.05171,-36.822031 -178.05171,0"
      id="path50"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w3 w5"
      d="m 267.32917,122.91883 c 55,-36.822031 92.65867,-36.822031 147.65867,0"
      id="path52"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w4 w5"
      d="m 325.13353,122.91883 c 27.5,-12 62.35431,-12 89.85431,0"
      id="path54"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w5 w2"
      d="m 414.98784,122.91883 c -82.5,-74.246749 -137.5,-74.246749 -220,0"
      id="path56"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w6 w9"
      d="m 524.98784,122.91883 c 82.5,-74.246749 208.42958,-74.246749 290.92957,0"
      id="path58"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w7 w8"
      d="m 622.77834,122.91883 c 27.5,-12 68.45906,-12 95.95906,0"
      id="path60"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w8 w6"
      d="m 719.34788,122.91883 c -55,-36.822031 -139.36004,-36.822031 -194.36004,0"
      id="path62"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <path
      class="edge w9 w8"
@@ -192,7 +192,7 @@
      d="m 900.27741,122.91883 c -152.84769,-159.885856 -559.76756,-159.885856 -705.28957,0"
      id="path66"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:none;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
      sodipodi:nodetypes="cc" />
   <text
      id="text68"
@@ -277,49 +277,49 @@
      d="m 159.5744,113.94623 -2.94283,1.69904 v -3.39808 z"
      id="path92"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w2 w0"
      d="m 104.25597,95.023253 2.94283,-1.699045 v 3.398088 z"
      id="path94"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w3 w5"
      d="m 370.5441,113.84184 -2.94283,1.69905 v -3.39809 z"
      id="path96"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w4 w5"
      d="m 345.26495,95.480665 -2.94283,1.699041 v -3.398085 z"
      id="path98"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w5 w2"
      d="m 304.11487,67.417834 2.94283,-1.699045 v 3.398089 z"
      id="path100"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w6 w9"
      d="m 677.72356,67.233766 -2.94283,1.699044 v -3.398088 z"
      id="path102"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w7 w8"
      d="m 673.75547,113.91883 -2.94283,1.69904 v -3.39809 z"
      id="path104"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w8 w6"
      d="m 619.47549,95.302304 2.94284,-1.699044 v 3.398086 z"
      id="path106"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w9 w8"
      d="m 768.2979,113.91883 2.94283,-1.69905 v 3.39809 z"
@@ -331,7 +331,7 @@
      d="m 536.12765,2.9980829 2.94283,-1.6990445 v 3.3980885 z"
      id="path110"
      inkscape:connector-curvature="0"
-     style="fill:none;stroke:#c8c8c8;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+     style="fill:#000000;stroke:#313131;stroke-width:0.5;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
   <path
      class="arrow w5 w2"
      d="m 468.08101,113.93375 2.94283,-1.69905 v 3.3981 z"

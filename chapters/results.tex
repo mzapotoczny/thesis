@@ -1,15 +1,15 @@
 \chapter{Results}
 
 \section{Single language}
-All experiments depicted in this section are based on configuration shown in section
-~\ref{sec:basic_params}. In table \ref{tab:universal} we show our baseline results
-for subset of the UD languages (due to limited computational resources we were
+All experiments depicted in this section are based on a configuration shown in section
+~\ref{sec:basic_params}. In Table~\ref{tab:universal} we show our baseline results
+for a subset of the UD languages (due to limited computational resources we were
 not able to train models for all of them). The results are compared to
-SyntaxNet\cite{andor_globally_2016} and ParseySaurus\cite{alberti_parsey_saurus_2017},
+SyntaxNet~\cite{andor_globally_2016} and ParseySaurus~\cite{alberti_parsey_saurus_2017},
 both from Google. The ParseySaurus is based on SyntaxNet, and uses characters
 as input, while the original SyntaxNet uses word embeddings. Both are transition-based,
-and needs no external POS tagger.
-It is worth noting that SyntaxNet has different hyperparameters configuration
+and need no external POS tagger.
+It is worth noting that SyntaxNet has different hyperparameter configuration
 for each language, while our parser uses the same configuration across all languages.
 
 \begin{table}[!htbp]
@@ -35,7 +35,7 @@ In the following sections we will show impact of different network parameters
 on the result.
 
 \subsection{Impact of \emph{reader} and \emph{predictor}}
-Firstly we will inspect the impact of different \emph{reader} and \emph{predictor}
+We first inspect the impact of different \emph{reader} and \emph{predictor}
 settings.
 \begin{table}[!htbp]
   \centering
@@ -70,13 +70,13 @@ settings.
 \end{table}
 
 In the upper part "Gold POS tags" we show a favorable situation when we have access
-to gold pos tag (approved by human). The inputs are base words embedded in a vector - 
-basically instead of whole \emph{reader} part we have just simple table lookup.
+to gold pos tag (approved by a human). The inputs are base words embedded in a vector 
+(we replace the \emph{reader} subnetwork with simple, learnable table lookup).
 This setting allowed us to obtain best results (especially for Polish) but
-gold pos tag are not available in real-word setting so this result is noted just
-as a trivia.
+gold pos tag are not available in a real-word setting so this result is noted just
+as a upper band of the model perfromance.
 
-The words and chars, soft att. settings don't use \emph{predictor}. Using just words
+The "words" and "chars, soft att." settings don't use a \emph{predictor}. Using just words
 as inputs (embedded in the same manner as base word) gives worst results. This is
 easy to predict because most words in the dataset occurs only once and so the
 network doesn't have a clue about role of most of the words.
@@ -84,19 +84,19 @@ Instead, using character-level input allows us to obtain much better results, es
 because in morphosyntactically rich languages the word spelling catches many
 word features that can be used in deducing the pos tag information.
 
-The result of adding a \emph{predictor} depends on attention type used.
+The result of adding a \emph{predictor} depends on the attention type used.
 Used with soft attention it decreased the results in Czech and English, but increased
 in Polish. When hard attention is used it can obtain the best results in all cases.
-The intuition behind these results are that with hard attention the labeller only
+The intuition behind these results is that with hard attention the labeller only
 sees annotation of the chosen head, and the error is backpropagated only to this
-element. On the other hand with soft attention the head annotation may refer
+element. On the other hand with soft attention the head annotation refers
 to many incorrect words introducing more noise. Additionally the soft attention labeller
-error is backpropagated through all words, which can introduce even more noise.
+error is backpropagated through all words, which can introduce even more noise on the neural weights.
 
 
 \subsection{Impact of decoding algorithm}
 
-In the table \ref{tab:edmonts_baseline} we show the comparison of greedy and
+In the Table~\ref{tab:edmonts_baseline} we show the comparison of greedy and
 Chu-Liu-Edmonds decoding algorithms.
 
 \begin{table}[!htbp]
@@ -124,18 +124,18 @@ Chu-Liu-Edmonds decoding algorithms.
 
 Counter intuitively the CLE algorithm makes the decoding results slightly worse.
 We have investigated this and the problem lies in the confidence of the
-\emph{scorer} predictions which are very sharp (see figure \ref{fig:attention}).
-Additionally non-top scores do not reflect alternatives but are rather only a noise,
-so when CLE algorithm finds a cycle it is very probable that it will break it
+\emph{scorer} predictions which are very sharp (see Figure~\ref{fig:attention}).
+Additionally non-top scores are very noisy and do not reflect  meaningful alternatives,
+thus CLE algorithm finds a cycle it is very probable that it will break it
 in wrong place, creating another error. The example of such behaviour is depicted
-on figure \ref{fig:cle}.
+in Figure~\ref{fig:cle}.
 
 \begin{figure}[!htbp]
   \centering
   \resizebox{\textwidth}{!}{
     \import{img/examples/cle/}{cle.pdf_tex}
   }
-  \caption{Dependency tree for sentence "What to do to advert threat lurking on the ice?".
+  \caption{Dependency tree for sentence "What to do to advert the threat lurking on ice?".
     The dashed-dotted (zagrożenia\txtrightarrow lodzie), dotted (czyhającego\txtrightarrow uniknąć)
     and dashed (zagrożenia\txtrightarrow uniknąć) arcs denote, respectively greedy, CLE, and groundtruth decodings.
     The greedy decoder produced the incorrect dependency zagrożenia\txtrightarrow lodzie instead of
@@ -156,7 +156,7 @@ among other words. Unfortunately this method did not improve the overall CLE alg
 score.
 
 \subsection{Recurrent state size}
-We have also investigated the impact of \emph{tagger} recurrent state size.
+We have also investigated the impact of the \emph{tagger} recurrent state size.
 It is desirable to have as small recurrent state size as possible because this
 part of the network is activated as many times as there are words in the sentence,
 making it a big performance factor.
@@ -224,7 +224,7 @@ piece $p$ that is prefix of $w$. The next step takes $w$ suffix of size $\|w\| -
 }
 \end{table}
 
-In table \ref{tab:word_pieces} we have depicted the results of word pieces model
+In Table~\ref{tab:word_pieces} we have depicted the results of word pieces model
 for different number od additional multi-character tokens. There is only minor
 improvement for Polish while for Czech we have actually worse results. Additionally
 this input model is not well suited for multilanguage parser, because the pieces
@@ -271,7 +271,7 @@ between languages and corpus size – while it is beneficial to share all parame
 PL-CZ and RU-CZ parser, the PL-RU parser works best if the reader subnetworks are
 separated. 
 
-Similarly as in single language configuration we have tested the impact of \emph{tagger}
+Similarly as in the single language configuration we have tested the impact of \emph{tagger}
 recurrent state size on the results (see Table~\ref{tab:birnn_multi_size}).
 
 \begin{table}[!htbp]
@@ -290,9 +290,9 @@ recurrent state size on the results (see Table~\ref{tab:birnn_multi_size}).
 \end{table}
 
 The results are computed on best Polish-Czech model (with share all strategy). We can see
-that the recurrent state size have similar behaviour as in single language Czech model - 
+that the recurrent state size have similar behaviour as in the single language Czech model - 
 the 50\% size has significant drop in the performance. It is worth noting that
-increasing the size changes the result only slightly (and are actually worse).
+increasing the size changes the result only slightly (and that they are actually worse).
 This mean that chosen \emph{tagger} size is well-suited for both single and multi
 language parsers.
 
@@ -301,7 +301,7 @@ After investigating results of the parser (this problem applies to both single
 and multi parser) we have found that if the \emph{tagger} assigns wrong POS tag to
 a particular word it can mislead the scorer and labeller producing wrong parse tree.
 In many cases after replacing wrong word with its synonym such that the \emph{tagger}
-will assign the right POS tag - the tree becomes valid parse. For an example see Figure~\ref{fig:pos_bad_good}.
+will assign the right POS tag - the tree becomes a valid parse. For an example see Figure~\ref{fig:pos_bad_good}.
 
 \begin{figure}[htbp]
   \centering
@@ -325,5 +325,14 @@ will assign the right POS tag - the tree becomes valid parse. For an example see
   \label{fig:pos_bad_good}
 \end{figure}
 
-\todotext{Podsumować wyniki polsko-polskie. Czy w ogóle to dodawać...}
-
+The prevent this behaviour on Polish language we have decided to use additional data
+for training the \emph{predictor} subnetwork. We used the \emph{milionowy podkorpus} (milion subcorpus)
+of the National Corpus of Polish Language \cite{przepiorkowski_nkjp_2012}. We converted
+this data to UD conllu format by filling the dependency information with a blank values
+and transoforming the polish-style POS tags to UD-style using conversion table provided
+by UD authors.
+Next we used our multilingual training procedure in which the first langauge was
+a standard UD Polish dataset, and the second one was our converted polish subcorpus.
+The difference with previous attempts is that we have to ignore loss on dependency head
+$L_h$ and dependency label $L_l$ for the second language.\\
+This model allowed us to obtain our best results: \textbf{92.69\% UAS} and \textbf{88.92\% LAS}.
