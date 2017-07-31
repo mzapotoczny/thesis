@@ -95,7 +95,7 @@ During training we use ground-truth head location, whereas during evaluation
 we use head word computed in previous step.
 
 \subsubsection{Decoding algorithm}
-The \emph{scorer} give us a $n$x$n+1$ matrix of head dependency preference
+The \emph{scorer} give us a $n \times n+1$ matrix of head dependency preference
 for each word. From this matrix we have find a set of dependencies that satisfy
 some constraints (exactly one root dependant, no cycles).
 We investigated two possibilities for such decoding: a greedy algorithm, and
