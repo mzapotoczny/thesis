@@ -53,8 +53,7 @@ the backward and forward passes by adding them.
 To prevent overfitting and encourage network to compute morphological features
 we can add additional training objective. It works by taking output from one of
 the tagger BiRNN layers and use it to predict available part-of-speech tags for
-each word. The result is not feeded back to the rest of the network because we
-think it would introduce too much noise.
+each word. The result is not feeded back to the rest of the network because it would introduce too much noise.
 
 \subsection{Parser}
 The last part of the network serves two purposes: to find head for each word and
@@ -137,7 +136,7 @@ All experiments are early stopped on validation set UAS.
 Hyperparameter selection is crucial for neural networks to obtain good results.
 For example, comparing our first experiments with architecture depicted above to
 the best single-language results (using the same basic architecture) gave us
-about 5\% boost in UAS score on Polish language.
+about 5 percent point boost in UAS score on Polish language.
 
 \begin{sloppypar}
 To find the best hyperparameters we have used the Spearmint system~\cite{snoek_practical_2012}
