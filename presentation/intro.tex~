@@ -1,0 +1,258 @@
+\begin{frame}\frametitle{What is dependency parsing?}
+   \begin{block}{Definition}
+      In \textcolor{red}{dependency parsing} we create a tree having words as nodes, describing the structure of the sentence.
+    \end{block} \pause
+    
+    Example deppendency tree:\vspace{2ex}
+    
+          \resizebox{0.8\textwidth}{!}{
+            \import{img/dep/}{dep.pdf_tex}
+          }        
+    \pause
+    \begin{itemize}
+        \item Each word is connected to another word (or a special ROOT token)
+        \item Arcs have labels 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Why it matters?}
+    \begin{itemize}[<+->]
+        \item Head-Dependent replationship is a good approximation to the semantic relationship between words
+        \item Can be used as a part of NLP pipeline for many tasks. For example: named entity recognition, relation extraction,
+            sentiment analysis etc.
+        \item More suitable for languages with flexible word ordering or unprojective sentences (i.e. sentences where {\em logical phrase} is not consistent in the sentence)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{How to teach the parser}
+   \begin{alertblock}{}
+      We need (large) amount of data (parsed sentences) to teach the parser.   
+   \end{alertblock}
+   \pause
+  \begin{itemize}
+        \item \textcolor{red}{Universal Dependencies} is a set of treebanks for \textcolor{red}{$\sim 50$} languages in an uniform format.\pause
+        \item Also contains information about POS-tags and lemmas.\pause
+        \item Number of languages is still growing.\pause
+        \item Let us see the screenshot from UD web-site:       
+  \end{itemize}      
+\end{frame}
+
+\begin{frame}{Universal Dependencies}  
+  \includegraphics[width=\textwidth]{img/tsd/ud.png}  
+\end{frame}
+
+\begin{frame}{Plan of the presentation}
+  \pause
+  \begin{enumerate}[1.]
+    \item How our parser works (first approximation), \pause
+    \item how to use other languages to parse, \pause
+    \item what can we learn about languages from parsing, \pause
+  \end{enumerate}
+  
+  \begin{block}{and later...}
+    we describe the network in more detailed manner.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Architecture overview}
+   \begin{block}{}
+     Our parser is \textcolor{red}{graph based}, \textcolor{red}{data driven}, and \textcolor{red}{fully neural}.
+   \end{block}
+   \pause
+   
+   \begin{block}{}
+   Parser network consists of three parts: \textcolor{orange}{Reader}, \textcolor{green}{Tagger} and \textcolor{blue}{Parser}
+   \end{block}
+   \pause
+   \vspace{1ex}
+     \includegraphics[width=\textwidth]{img/network/simple_network2.png}  
+    
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{Results}\pause
+    {\scriptsize
+    \begin{table}[!htbp]
+      \centering
+      \begin{tabular}{l l | l l | l l | l l}
+        language & \#sentences & \multicolumn{2}{c|}{Ours} & \multicolumn{2}{c|}{SyntaxNet} & \multicolumn{2}{c}{ParseySaurus} \\ \hline
+        & & UAS & LAS & UAS & LAS & UAS & LAS\\ \hline
+        Czech & 87 913 & \textbf{91.41} & \textbf{88.18} & 89.47 & 85.93 & 89.09 & 84.99 \\
+        Polish & 8 227 & 90.26 & 85.32 & 88.30 & 82.71 & \textbf{91.86} & \textbf{87.49}\\
+        Russian & 5 030 & 83.29 & 79.22 & 81.75 & 77.71 & \textbf{84.27} & \textbf{80.65} \\
+        German & 15 892 & 82.67 & 76.51 & 79.73 & 74.07 & \textbf{84.12} & \textbf{79.05}\\
+        English & 16 622 & 87.44 & 83.94 & 84.79 & 80.38 & \textbf{87.86} & \textbf{84.45}\\ 
+        French & 16 448 & \textbf{87.25} & \textbf{83.50} & 84.68 & 81.05 & 86.61 & 83.1\\
+        Ancient Greek & 25 251 & \textbf{78.96} & \textbf{72.36} & 68.98 & 62.07 & 73.85 & 68.1
+      \end{tabular}
+      \caption{Baseline results of models trained on single languages from
+        UD v1.3. Our models use only the orthographic representation of
+        tokenized words during inference and works without a separate POS tagger.}
+      \label{tab:universal}
+    \end{table}
+    }
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Multilingual training}
+    \begin{itemize}
+        \item Polish language has small number of dependency parsing examples (8 227 sentences, 83 571 words) \pause
+        \item Czech language has much better dataset (77 765 sentences, 1 332 566 words)  \pause
+    \end{itemize}
+    
+    \begin{block}{Question}
+       How to use data from \textcolor{red}{bigger} language, to train parsing on \textcolor{red}{smaller} language.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{Multilingual training (cont.)}
+  Let us consider Polish and Czech language. There are two main options:
+  
+  \begin{block}{Option 1: all in common}
+  \pause
+    \begin{itemize}
+      \item We create an artifficial Polish-Czech data containing sentences from the two languages. \pause
+      \item Nothing changes apart from 1-bit language information added to data.
+    \end{itemize}
+  \end{block}
+  \pause
+  \begin{block}{Option 2}
+    \begin{itemize}
+      \item Some parts of the network are cloned
+      \item Some parts of the network are shared
+    \end{itemize}
+  \end{block}  
+\end{frame}
+
+\begin{frame}
+    \frametitle{Multilingual results}
+    \pause
+    {\scriptsize
+    \begin{table}[!htbp]
+      \centering  
+      \begin{tabular}{l | l l c c}
+        Shared parts & Main lang & Aux lang & UAS & LAS \\ \hline
+          - & Polish & - & 90.31 & 85.21 \\
+        \emph{Parser} & Polish & Czech & 90.72 & 85.57 \\ % local_storage/multi/pl_cs_merge_generator
+        \emph{Tagger, Parser} & Polish & Czech & 91.19 & 86.37 \\ % sonata2:  /pio/lscratch/1/i248100/pl_cs_unification_exclude_pos
+        \emph{Tagger, POS Predictor, Parser} & Polish & Czech & 91.65 & 86.88 \\ % local_storage/dependency_pl_cs_new
+        \emph{Reader, Tagger, POS Predictor, Parser} & Polish & Czech & \textbf{91.91} & \textbf{87.77} \\\hline % sonata1: /pio/lscratch/1/i248100/multi_pl_cs_different_eos_merge_all
+        \emph{Parser} & Polish & Russian & 90.31 & 85.07 \\  % local_storage2/pl-ru-inc-generator
+        \emph{Tagger, POS Predictor, Parser} & Polish & Russian &
+        \textbf{91.34} & \textbf{86.36} \\ 
+        \emph{Reader, Tagger, POS Predictor, Parser} & Polish & Russian & 89.16 & 82.94 \\  %  local_storage2/multi_pl_ru_different_eos_merge_all
+    \hline\hline % local_storage/multi/pl_ru_same_eos
+        - & Russian & - & 83.43 & 79.24 \\
+        \emph{Parser} & Russian & Czech & 83.15 & 78.69 \\  % sonata0: /pio/lscratch/1/i248100/ru-cs-parser
+        \emph{Tagger, POS Predictor, Parser} & Russian & Czech & 83.91 & 79.79 \\ %  local_storage/multi/ru_cs
+        \emph{Reader, Tagger, POS Predictor, Parser} & Russian & Czech & \textbf{84.78} & \textbf{80.35} % sonata1:  /pio/lscratch/1/i248100/ru-cs-all
+      \end{tabular}
+      \label{tab:multi_baseline}
+      \caption{Impact of parameter sharing strategies on main language parsing accuracy when multilingual training
+        is used for additional supervision.}
+    \end{table}
+    }
+\end{frame}
+
+\begin{frame}{Using other sources of data}
+  \begin{block}{}
+    It is possible to use POS-tagged corpora as an additional data for parser.
+  \end{block}
+  
+  \pause
+  \begin{itemize}
+    \item We used Polish milion subcorpus of NKJP (not in the paper).\pause
+    \item Results: UAS: 92.53, LAS: 88.84\pause
+    \item All hands on deck! A Polish-treebank + Czech-treebank + POS-data dataset.\pause
+    \item Result: \textcolor{red}{\textbf{UAS: 93.88, LAS: 90.19}} (previous best was 91.91 UAS 87.77 LAS)
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Analogy test}
+  \begin{itemize}
+    \item Word embeddings have many interesting properties (some of them are side effects): \pause
+      \begin{enumerate}[1.]
+        \item \textcolor{blue}{Close} words have \textcolor{dgreen}{close} embeddings. \pause
+        \item They create meaningful translation vectors, such as \textcolor{dgreen}{queen - king} which is otfen similar to 
+        \textcolor{dgreen}{woman - man}. \pause
+      \end{enumerate}      
+    \item One can create \textcolor{red}{analogy test} [TODO: jakos powiedziec ze to nie my wymyslilismy]:
+      \begin{quote}
+        \textcolor{dgreen}{king - man + woman} should be close to \textcolor{dgreen}{queen} \\
+        \textcolor{dgreen}{uncle - man + woman} should be close to \textcolor{dgreen}{aunt} \\
+        \textcolor{dgreen}{Paris - France + Czech} should be close to  \textcolor{dgreen}{Prague} \\
+        and so on
+      \end{quote}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Polish and Russian characters}
+ \begin{itemize}
+   \item Polish language uses latin script whith some diacritics, while russian uses Cyrillic script.
+   \item We created a table with pairs of some polish and russian letters which are equivalent:
+ \pause
+\begin{quote}
+a-а, b-б, c-ц, d-д, e-е, e-э, f-ф, g-г, h-х, i-и, j-й, k-к, l-л, m-м, n-н, o-о, p-п, r-р, s-с, t-т, u-у, w-в, y-ы, z-з, ł-л, ż-ж
+\end{quote}
+   and apply to them analogy test.
+ \end{itemize}
+ \pause
+ \begin{block}{Result}
+   In \textcolor{red}{\bf 48.3\%} cases we choose the right vector.
+ \end{block}
+  \pause
+  Quite a big number: although these both languages have common root (Proto-Slavic), since more than 1000 years they evolve separately. \end{frame}
+
+\begin{frame}{Polish and Russian words}
+  \begin{block}{}
+\begin{tabular}[pos]{|l|l|}\small
+  Polish word & Closest russian embedings \\ \hline
+  \textcolor{blue}{przedwrześniowej} & \textcolor{dgreen}{адренергической тренерской таврической} \\ 
+                   & \textcolor{dgreen}{непосредственной археологической}  \\
+                   & \textcolor{dgreen}{философской} \textcolor{red}{\em верхнюю} \\ \hline
+  \textcolor{blue}{większych}        & \textcolor{dgreen}{автомобильных} \textcolor{red}{\em трёхдневные} \textcolor{dgreen}{технических} \\
+                   &  \textcolor{dgreen}{практических официальных оригинальных} \\ \hline
+  \textcolor{blue}{policyjnym}       & \textcolor{dgreen}{главным историческим глазным непосре-} \\
+                   & \textcolor{dgreen}{дственным} \textcolor{red}{\em косыми} \textcolor{dgreen}{летним двухсимвольным} \\\hline
+\end{tabular}
+  \end{block}
+  \pause
+  \begin{itemize}
+    \item \textcolor{dgreen}{Green} Russian words have similar grammatical function to \textcolor{blue}{Polish word}. \pause
+    \item \textcolor{dgreen}{\emph{-ской}} (skoy) and \textcolor{dgreen}{\emph{-нной}} (nnoy) quite distant from polish \textcolor{blue}{\emph{-owej}} (ovey). \pause
+    \item 3-letter \textcolor{blue}{-ych} paired with 2 \textcolor{dgreen}{-ых} \pause
+  \end{itemize}
+  
+  \begin{alertblock}{}
+    The network wasn't told that it should look at suffices.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Conclusion}
+  \begin{itemize}[<+->]
+    \item Fully neural parser is able to ???? 
+    \item Janku, juz nie zdazylem nic madrego tu napisac
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{If there is enough time}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Network architecture. Full version}
+    \begin{center}
+        \resizebox{\textwidth}{!}{
+          \import{img/network/}{network.pdf_tex}
+        }
+    \end{center}
+\end{frame}
+
+

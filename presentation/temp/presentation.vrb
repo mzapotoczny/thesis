@@ -1,0 +1,23 @@
+\frametitle{Api}
+    \lstset{language=Python,
+                gobble=8,
+                showstringspaces=false,
+                basicstyle=\ttfamily,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{green}\ttfamily,
+                morecomment=[l][\color{magenta}]{\#}
+    }
+    {\scriptsize
+    \begin{lstlisting}
+        # First import the Parser class
+        from lvsr.parser import Parser
+
+        # Get parser for language "pl" from model file "model.zip"
+        my_parser = Parser('model.zip', 'pl')
+        my_parser.initialize()
+
+        print(my_parser.parse(["first sentence.", "second sentence"]))
+    \end{lstlisting}
+    }
+

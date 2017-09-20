@@ -1,0 +1,30 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+%\usepackage{style}
+\usetheme{Warsaw}
+\usepackage{amsmath}
+\usepackage{graphicx, import, pdfpages, listings, tikz}
+
+\usepackage{xcolor}
+
+\definecolor{olive}{rgb}{0.3, 0.4, .1}
+\definecolor{fore}{RGB}{249,242,215}
+\definecolor{back}{RGB}{51,51,51}
+\definecolor{title}{RGB}{255,0,90}
+\definecolor{dgreen}{rgb}{0.,0.6,0.}
+\definecolor{gold}{rgb}{1.,0.84,0.}
+\definecolor{JungleGreen}{cmyk}{0.99,0,0.52,0}
+\definecolor{BlueGreen}{cmyk}{0.85,0,0.33,0}
+\definecolor{RawSienna}{cmyk}{0,0.72,1,0.45}
+\definecolor{Magenta}{cmyk}{0,1,0,0}
+
+\input{title.tex}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\input{intro.tex}
+%\input{end.tex}
+
+\end{document}
